@@ -5,6 +5,9 @@ import { useLoginMutation } from "@/modules/auth/redux/authApi";
 import { useNotification } from "@/modules/shared/hooks";
 import { ReduxUtils } from "@/modules/shared/utils";
 import { useRouter } from "next/navigation";
+import Paragraph from "antd/es/typography/Paragraph";
+import Text from "antd/es/typography/Text";
+import Link from "next/link";
 
 export default function LoginForm() {
   const router = useRouter();
@@ -68,11 +71,17 @@ export default function LoginForm() {
         />
       </Form.Item>
 
+      <Paragraph style={{ textAlign: "right" }}>
+        <Link href="/forgot-password">
+          <Text strong>Forgot Password?</Text>
+        </Link>
+      </Paragraph>
+
       <Form.Item>
         <Button
+          block
           type="primary"
           htmlType="submit"
-          block
           loading={isLoading}
           disabled={isLoading}
         >
