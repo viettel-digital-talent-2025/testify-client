@@ -7,7 +7,7 @@ import Paragraph from "antd/es/typography/Paragraph";
 
 export default function CTASection() {
   return (
-    <section className="px-4 py-20 md:py-32">
+    <section id="cta" className="px-4 py-20 md:py-32">
       <div className="mx-auto max-w-7xl">
         <Card
           className="overflow-hidden border-none"

@@ -54,7 +54,7 @@ const benefits = [
 
 export default function BenefitsSection() {
   return (
-    <section className="bg-muted/30 px-4 py-20 md:py-32">
+    <section id="benefits" className="bg-muted/30 px-4 py-20 md:py-32">
       <div className="mx-auto max-w-7xl">
         <div className="mx-auto mb-16 max-w-2xl text-center">
           <Title level={2}>Workflow Process</Title>

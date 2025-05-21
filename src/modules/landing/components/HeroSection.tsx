@@ -73,7 +73,10 @@ const chartOptions = {
 
 export default function HeroSection() {
   return (
-    <section className="from-background to-muted/50 relative overflow-hidden bg-gradient-to-b px-4 py-20 md:py-32">
+    <section
+      className="from-background to-muted/50 relative overflow-hidden bg-gradient-to-b px-4 py-20 md:py-32"
+      id="hero"
+    >
       <div className="mx-auto max-w-7xl">
         <Row gutter={[48, 48]} align="middle">
           <Col xs={24} md={14}>

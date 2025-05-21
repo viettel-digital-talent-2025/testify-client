@@ -12,8 +12,10 @@ import {
   BugOutlined,
   UserOutlined,
   LogoutOutlined,
-  MessageOutlined,
-  DollarOutlined,
+  HomeOutlined,
+  AppstoreOutlined,
+  RocketOutlined,
+  CheckCircleOutlined,
   LoginOutlined,
 } from "@ant-design/icons";
 import { useAppSelector } from "@/modules/shared/hooks";
@@ -45,19 +47,24 @@ const UserItems: MenuProps["items"] = [
 
 const GuestItems: MenuProps["items"] = [
   {
-    key: "testimonials",
-    icon: <MessageOutlined />,
-    label: <Link href="#testimonials">Testimonials</Link>,
+    key: "hero",
+    icon: <HomeOutlined />,
+    label: <Link href="#hero">Overview</Link>,
   },
   {
     key: "features",
-    icon: <DashboardOutlined />,
+    icon: <AppstoreOutlined />,
     label: <Link href="#features">Features</Link>,
   },
   {
-    key: "pricing",
-    icon: <DollarOutlined />,
-    label: <Link href="#pricing">Pricing</Link>,
+    key: "benefits",
+    icon: <RocketOutlined />,
+    label: <Link href="#benefits">Workflow</Link>,
+  },
+  {
+    key: "cta",
+    icon: <CheckCircleOutlined />,
+    label: <Link href="#cta">Get Started</Link>,
   },
 ];
 
@@ -108,11 +115,11 @@ const GuestMenu = () => {
     <Space style={{ flex: 1, width: "100%", justifyContent: "end" }}>
       <Link href="/login">
         <Button type="primary" icon={<LoginOutlined />}>
-          Đăng nhập
+          Login
         </Button>
       </Link>
       <Link href="/register">
-        <Button icon={<UserOutlined />}>Đăng ký</Button>
+        <Button icon={<UserOutlined />}>Register</Button>
       </Link>
     </Space>
   );
