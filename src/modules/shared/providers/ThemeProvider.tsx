@@ -1,18 +1,12 @@
-"use client";
-import { ConfigProvider, App, notification } from "antd";
+import { ConfigProvider, App } from "antd";
 import { AntdRegistry } from "@ant-design/nextjs-registry";
 import { NotificationProvider } from "@/modules/shared/contexts";
-import "@/modules/shared/chartjs/config";
-
-notification.config({
-  placement: "topRight",
-  duration: 3,
-  showProgress: true,
-});
+import { colors } from "@/modules/shared/constants/colors";
+import "@/modules/shared/components/chartjs/config";
 
 export const theme = {
   token: {
-    colorPrimary: "#ee0033",
+    colorPrimary: colors.primary,
   },
   components: {
     // Card: {
