@@ -1,12 +1,15 @@
 "use client";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "@/modules/shared/store/store";
+import { User } from "@/modules/auth/types/auth";
 
 export type AuthState = {
+  user?: User;
   accessToken?: string;
 };
 
 const initialState: AuthState = {
+  user: undefined,
   accessToken: undefined,
 };
 
@@ -18,7 +21,12 @@ const authSlice = createSlice({
       state.accessToken = action.payload;
     },
 
-    setSignOut: (state): void => {
+    setUser: (state, action: PayloadAction<User>): void => {
+      state.user = action.payload;
+    },
+
+    setLogout: (state): void => {
+      state.user = undefined;
       state.accessToken = undefined;
     },
   },
@@ -26,6 +34,7 @@ const authSlice = createSlice({
 
 export default authSlice.reducer;
 
-export const { setAccessToken, setSignOut } = authSlice.actions;
+export const { setAccessToken, setUser, setLogout } = authSlice.actions;
 
 export const selectAccessToken = (state: RootState) => state.auth.accessToken;
+export const selectUser = (state: RootState) => state.auth.user;
