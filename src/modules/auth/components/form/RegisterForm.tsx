@@ -86,7 +86,7 @@ export default function RegisterForm() {
         label="Password"
         rules={[
           { required: true, message: "Please enter your password" },
-          { min: 8, message: "Password must be at least 8 characters" },
+          { min: 6, message: "Password must be at least 8 characters" },
         ]}
       >
         <Input.Password
