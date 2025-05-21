@@ -9,7 +9,7 @@ import {
   ForgotPasswordRequest,
 } from "@/modules/auth/types/auth";
 import { store } from "@/modules/shared/store/store";
-import { setAccessToken } from "./authSlide";
+import { setAccessToken, setLogout, setUser } from "./authSlide";
 
 export const authApi = appApi.injectEndpoints({
   endpoints: (builder) => ({
@@ -22,6 +22,7 @@ export const authApi = appApi.injectEndpoints({
       async onQueryStarted(_, { queryFulfilled }) {
         const res = await queryFulfilled;
         store.dispatch(setAccessToken(res.data.accessToken));
+        store.dispatch(setUser(res.data.user));
       },
     }),
 
@@ -34,6 +35,7 @@ export const authApi = appApi.injectEndpoints({
       async onQueryStarted(_, { queryFulfilled }) {
         const res = await queryFulfilled;
         store.dispatch(setAccessToken(res.data.accessToken));
+        store.dispatch(setUser(res.data.user));
       },
     }),
 
@@ -42,6 +44,9 @@ export const authApi = appApi.injectEndpoints({
         url: "/api/v1/auth/logout",
         method: "DELETE",
       }),
+      async onQueryStarted(_, { dispatch }) {
+        dispatch(setLogout());
+      },
     }),
 
     refreshToken: builder.mutation<RefreshTokenResponse, void>({
