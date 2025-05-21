@@ -7,7 +7,7 @@ import {
   FetchBaseQueryError,
 } from "@reduxjs/toolkit/query/react";
 import { RootState } from "@/modules/shared/store/store";
-import { setAccessToken, setSignOut } from "@/modules/auth/redux/authSlide";
+import { setAccessToken, setLogout } from "@/modules/auth/redux/authSlide";
 import { RefreshTokenResponse } from "@/modules/auth/types/auth";
 
 const baseQuery = fetchBaseQuery({
@@ -43,7 +43,7 @@ const baseQueryWithReauth: BaseQueryFn<
       api.dispatch(setAccessToken(data.accessToken));
       result = await baseQuery(args, api, extraOptions);
     } else {
-      api.dispatch(setSignOut());
+      api.dispatch(setLogout());
     }
   }
   return result;
@@ -53,5 +53,5 @@ export const appApi = createApi({
   reducerPath: "appApi",
   baseQuery: baseQueryWithReauth,
   endpoints: () => ({}),
-  tagTypes: ["Auth"],
+  tagTypes: ["Auth", "Scenario"],
 });
