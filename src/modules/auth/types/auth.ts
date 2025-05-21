@@ -1,3 +1,10 @@
+export interface User {
+  id: string;
+  email: string;
+  firstname: string;
+  lastname: string;
+}
+
 export interface RegisterRequest {
   email: string;
   fullname: string;
@@ -5,6 +12,7 @@ export interface RegisterRequest {
 }
 
 export interface RegisterResponse {
+  user: User;
   accessToken: string;
 }
 
@@ -14,6 +22,7 @@ export interface LoginRequest {
 }
 
 export interface LoginResponse {
+  user: User;
   accessToken: string;
 }
 
