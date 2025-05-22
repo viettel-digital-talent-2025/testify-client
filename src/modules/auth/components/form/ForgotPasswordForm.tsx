@@ -1,29 +1,34 @@
 "use client";
-
+import { useRouter } from "next/navigation";
 import { Form, Input, Button } from "antd";
-import { useForgotPasswordMutation } from "@/modules/auth/redux/authApi";
+import { useForgotPasswordMutation } from "@/modules/auth/apis/authApi";
+import { useAppDispatch, useNotification } from "@/modules/shared/hooks";
+import { setEmail } from "@/modules/auth/slices/recoveryPassSlice";
 import { ReduxUtils } from "@/modules/shared/utils";
-import { useNotification } from "@/modules/shared/hooks";
 
 export default function ForgotPasswordForm() {
+  const dispatch = useAppDispatch();
+  const router = useRouter();
   const [form] = Form.useForm();
   const [forgotPassword, { isLoading }] = useForgotPasswordMutation();
   const { notify } = useNotification();
 
   const onFinish = async () => {
     const values = await form.validateFields();
-    const response = await forgotPassword(values);
-    if (response.error) {
+    const res = await forgotPassword(values);
+    if (!res.error) {
       notify({
-        message: "Failed to send reset link",
-        description: ReduxUtils.extractErrMsg(response.error),
-        notiType: "error",
+        message: "OTP sent to your email",
+        description: ReduxUtils.extractSuccessMsg(res.data),
+        notiType: "success",
       });
+      dispatch(setEmail(values.email));
+      router.push("/verify-otp");
     } else {
       notify({
-        message: "Reset link sent",
-        description: ReduxUtils.extractSuccessMsg(response.data),
-        notiType: "success",
+        message: "Failed to send reset OTP",
+        description: ReduxUtils.extractErrMsg(res.error),
+        notiType: "error",
       });
     }
   };
@@ -31,9 +36,10 @@ export default function ForgotPasswordForm() {
   return (
     <Form
       form={form}
-      name="forgot-password"
-      onFinish={onFinish}
       layout="vertical"
+      name="forgot-password"
+      size="large"
+      onFinish={onFinish}
       requiredMark={false}
     >
       <Form.Item
@@ -43,18 +49,12 @@ export default function ForgotPasswordForm() {
           { type: "email", message: "Please enter a valid email" },
         ]}
       >
-        <Input placeholder="Enter your email" size="large" />
+        <Input placeholder="Enter your email" />
       </Form.Item>
 
       <Form.Item>
-        <Button
-          type="primary"
-          htmlType="submit"
-          loading={isLoading}
-          block
-          size="large"
-        >
-          Send Reset Link
+        <Button type="primary" htmlType="submit" loading={isLoading} block>
+          Send OTP
         </Button>
       </Form.Item>
     </Form>

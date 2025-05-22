@@ -1,7 +1,7 @@
 "use client";
 import { Form, Input, Button } from "antd";
 import { LockOutlined, MailOutlined } from "@ant-design/icons";
-import { useLoginMutation } from "@/modules/auth/redux/authApi";
+import { useLoginMutation } from "@/modules/auth/apis/authApi";
 import { useNotification } from "@/modules/shared/hooks";
 import { ReduxUtils } from "@/modules/shared/utils";
 import { useRouter } from "next/navigation";
@@ -17,21 +17,21 @@ export default function LoginForm() {
 
   const handleFinish = async () => {
     const values = await form.validateFields();
-    const response = await login(values);
+    const res = await login(values);
 
-    if (response.error) {
-      notify({
-        message: "Failed to login",
-        description: ReduxUtils.extractErrMsg(response.error),
-        notiType: "error",
-      });
-    } else {
+    if (!res.error) {
       notify({
         message: "Login successful",
-        description: ReduxUtils.extractSuccessMsg(response.data),
+        description: ReduxUtils.extractSuccessMsg(res.data),
         notiType: "success",
       });
       router.push("/dashboard");
+    } else {
+      notify({
+        message: "Failed to login",
+        description: ReduxUtils.extractErrMsg(res.error),
+        notiType: "error",
+      });
     }
   };
 

@@ -2,7 +2,7 @@
 import { useRouter } from "next/navigation";
 import { Form, Input, Button, Space } from "antd";
 import { LockOutlined, MailOutlined, UserOutlined } from "@ant-design/icons";
-import { useRegisterMutation } from "@/modules/auth/redux/authApi";
+import { useRegisterMutation } from "@/modules/auth/apis/authApi";
 import { useNotification } from "@/modules/shared/hooks";
 import { ReduxUtils } from "@/modules/shared/utils";
 
@@ -16,19 +16,19 @@ export default function RegisterForm() {
     const values = await form.validateFields();
     const res = await register(values);
 
-    if (res.error) {
-      notify({
-        message: "Failed to create account",
-        description: ReduxUtils.extractErrMsg(res.error),
-        notiType: "error",
-      });
-    } else {
+    if (!res.error) {
       notify({
         message: "Account created successfully",
         description: ReduxUtils.extractSuccessMsg(res.data),
         notiType: "success",
       });
       router.push("/dashboard");
+    } else {
+      notify({
+        message: "Failed to create account",
+        description: ReduxUtils.extractErrMsg(res.error),
+        notiType: "error",
+      });
     }
   };
 

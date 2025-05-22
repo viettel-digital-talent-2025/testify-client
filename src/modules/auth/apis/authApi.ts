@@ -7,9 +7,12 @@ import {
   LoginResponse,
   RefreshTokenResponse,
   ForgotPasswordRequest,
+  ResetPasswordRequest,
+  VerifyOtpRequest,
+  VerifyOtpResponse,
 } from "@/modules/auth/types/auth";
 import { store } from "@/modules/shared/store/store";
-import { setAccessToken, setLogout, setUser } from "./authSlide";
+import { setAccessToken, setLogout, setUser } from "../slices/authSlide";
 
 export const authApi = appApi.injectEndpoints({
   endpoints: (builder) => ({
@@ -64,6 +67,22 @@ export const authApi = appApi.injectEndpoints({
         body: params,
       }),
     }),
+
+    verifyOtp: builder.mutation<VerifyOtpResponse, VerifyOtpRequest>({
+      query: (params) => ({
+        url: "/api/v1/auth/verify-otp",
+        method: "POST",
+        body: params,
+      }),
+    }),
+
+    resetPassword: builder.mutation<void, ResetPasswordRequest>({
+      query: (params) => ({
+        url: "/api/v1/auth/reset-password",
+        method: "POST",
+        body: params,
+      }),
+    }),
   }),
 });
 
@@ -73,4 +92,6 @@ export const {
   useLogoutMutation,
   useRefreshTokenMutation,
   useForgotPasswordMutation,
+  useVerifyOtpMutation,
+  useResetPasswordMutation,
 } = authApi;
