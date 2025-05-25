@@ -1,9 +1,8 @@
 import Link from "next/link";
 import { Button, Row, Col, Space, Card } from "antd";
 import { ArrowRightOutlined } from "@ant-design/icons";
-import { colors } from "@/modules/shared/constants/colors";
-import Title from "antd/es/typography/Title";
 import Paragraph from "antd/es/typography/Paragraph";
+import Title from "antd/es/typography/Title";
 
 export default function CTASection() {
   return (
@@ -11,10 +10,6 @@ export default function CTASection() {
       <div className="mx-auto max-w-7xl">
         <Card
           className="overflow-hidden border-none"
-          style={{
-            background: `linear-gradient(135deg, ${colors.primary} 0%, ${colors.primary}dd 100%)`,
-            boxShadow: "0 4px 20px rgba(0, 0, 0, 0.1)",
-          }}
           styles={{
             body: {
               padding: 0,
@@ -41,11 +36,10 @@ export default function CTASection() {
               <Space direction="vertical" size="middle" className="w-full">
                 <Link href="/register" className="w-full">
                   <Button
+                    block
+                    type="primary"
                     size="large"
-                    className="w-full"
                     style={{
-                      background: "white",
-                      color: colors.primary,
                       border: "none",
                       height: 48,
                       fontSize: 16,
@@ -62,7 +56,7 @@ export default function CTASection() {
                     style={{
                       background: "transparent",
                       color: "white",
-                      border: "2px solid white",
+                      border: "2px solid",
                       height: 48,
                       fontSize: 16,
                       fontWeight: 500,

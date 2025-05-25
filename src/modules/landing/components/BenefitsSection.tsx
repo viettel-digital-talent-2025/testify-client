@@ -8,6 +8,7 @@ import {
 import { colors } from "@/modules/shared/constants/colors";
 import Title from "antd/es/typography/Title";
 import Paragraph from "antd/es/typography/Paragraph";
+import "./BenefitsSection.css";
 
 const benefits = [
   {
@@ -19,7 +20,7 @@ const benefits = [
       <CheckCircleOutlined style={{ fontSize: 24, color: colors.primary }} />
     ),
     color: colors.primary,
-    bgColor: colors.secondary,
+    bgColor: colors.background,
   },
   {
     step: 2,
@@ -30,7 +31,7 @@ const benefits = [
       <PlayCircleOutlined style={{ fontSize: 24, color: colors.primary }} />
     ),
     color: colors.primary,
-    bgColor: colors.secondary,
+    bgColor: colors.background,
   },
   {
     step: 3,
@@ -39,7 +40,7 @@ const benefits = [
       "Review comprehensive reports and visualizations. Our AI highlights bottlenecks and performance issues.",
     icon: <BarChartOutlined style={{ fontSize: 24, color: colors.primary }} />,
     color: colors.primary,
-    bgColor: colors.secondary,
+    bgColor: colors.background,
   },
   {
     step: 4,
@@ -48,7 +49,7 @@ const benefits = [
       "Implement suggested optimizations and run follow-up tests to verify improvements.",
     icon: <RocketOutlined style={{ fontSize: 24, color: colors.primary }} />,
     color: colors.primary,
-    bgColor: colors.secondary,
+    bgColor: colors.background,
   },
 ];
 
@@ -83,7 +84,7 @@ export default function BenefitsSection() {
                         display: "flex",
                         justifyContent: "center",
                         alignItems: "center",
-                        boxShadow: `0 0 10px ${item.color}66`,
+                        boxShadow: `0 0 10px ${item.color}`,
                         fontWeight: "bold",
                         fontSize: 16,
                         zIndex: 10, // ensure it's on top

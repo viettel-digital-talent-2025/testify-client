@@ -1,7 +1,7 @@
 "use client";
 import "@/modules/shared/components/chartjs/config";
 import { Line } from "react-chartjs-2";
-import { Button, Row, Col, Space } from "antd";
+import { Button, Row, Col, Space, Card } from "antd";
 import { ArrowRightOutlined } from "@ant-design/icons";
 import { colors } from "@/modules/shared/constants/colors";
 import Link from "next/link";
@@ -110,9 +110,13 @@ export default function HeroSection() {
           </Col>
 
           <Col xs={24} md={10}>
-            <div className="bg-background relative h-[400px] w-full rounded-lg border p-6 shadow-xl">
+            <Card
+              hoverable
+              style={{ height: "400px" }}
+              styles={{ body: { height: "calc(100% - 24px)" } }}
+            >
               <Line data={chartData} options={chartOptions} />
-            </div>
+            </Card>
           </Col>
         </Row>
       </div>

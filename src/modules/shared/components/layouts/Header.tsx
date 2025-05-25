@@ -19,8 +19,8 @@ import {
   LoginOutlined,
 } from "@ant-design/icons";
 import { useAppSelector } from "@/modules/shared/hooks";
-import { selectUser } from "@/modules/auth/redux/authSlide";
-import { useLogoutMutation } from "@/modules/auth/redux/authApi";
+import { selectUser } from "@/modules/auth/slices/authSlide";
+import { useLogoutMutation } from "@/modules/auth/apis/authApi";
 
 const UserItems: MenuProps["items"] = [
   {
@@ -78,13 +78,14 @@ export default function Header() {
       style={{
         position: "fixed",
         top: 0,
-        zIndex: 1,
+        zIndex: 9999,
         width: "100%",
+        height: "max-content",
         display: "flex",
         alignItems: "center",
         justifyContent: "space-between",
-        backgroundColor: "white",
-        borderBottom: `1px solid ${colors.secondary}`,
+        backgroundColor: colors.dark,
+        borderBottom: `1px solid #adadad`,
         padding: "0 24px",
       }}
     >
@@ -94,25 +95,34 @@ export default function Header() {
           flex: 1,
           margin: 0,
           textWrap: "nowrap",
-          color: colors.primary,
         }}
       >
-        Testify
+        <Link href="/" style={{ color: colors.primary }}>
+          Testify
+        </Link>
       </Title>
       <Menu
+        theme="dark"
         mode="horizontal"
         selectedKeys={[current]}
         items={user ? UserItems : GuestItems}
-        style={{ flex: 3, width: "100%", justifyContent: "center" }}
+        style={{
+          flex: 3,
+          width: "100%",
+          justifyContent: "center",
+          background: colors.dark,
+        }}
       />
-      {user ? <UserMenu /> : <GuestMenu />}
+      <div className="flex flex-1 justify-end">
+        {user ? <UserMenu /> : <GuestMenu />}
+      </div>
     </AntHeader>
   );
 }
 
 const GuestMenu = () => {
   return (
-    <Space style={{ flex: 1, width: "100%", justifyContent: "end" }}>
+    <Space style={{ width: "100%", justifyContent: "end" }}>
       <Link href="/login">
         <Button type="primary" icon={<LoginOutlined />}>
           Login
