@@ -3,8 +3,8 @@ import {
   FormTitle,
   FormDescription,
   FormFooter,
-} from "@/modules/auth/components/form/Form";
-import { LoginForm } from "@/modules/auth/components/form";
+} from "@/auth/components/form/Form";
+import { LoginForm } from "@/auth/components/form";
 
 export default function LoginPage() {
   return (

@@ -3,8 +3,8 @@ import {
   FormTitle,
   FormDescription,
   FormFooter,
-} from "@/modules/auth/components/form/Form";
-import { ResetPasswordForm } from "@/modules/auth/components/form";
+} from "@/auth/components/form/Form";
+import { ResetPasswordForm } from "@/auth/components/form";
 
 export default function ResetPasswordPage() {
   return (

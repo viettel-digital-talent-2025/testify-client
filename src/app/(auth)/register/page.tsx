@@ -3,8 +3,8 @@ import {
   FormTitle,
   FormDescription,
   FormFooter,
-} from "@/modules/auth/components/form/Form";
-import { RegisterForm } from "@/modules/auth/components/form";
+} from "@/auth/components/form/Form";
+import { RegisterForm } from "@/auth/components/form";
 
 export default function RegisterPage() {
   return (
