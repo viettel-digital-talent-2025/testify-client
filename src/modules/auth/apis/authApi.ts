@@ -1,5 +1,5 @@
 "use client";
-import { appApi } from "@/modules/shared/store/api/appApi";
+import { appApi } from "@/shared/store/api/appApi";
 import {
   RegisterResponse,
   RegisterRequest,
@@ -10,8 +10,8 @@ import {
   ResetPasswordRequest,
   VerifyOtpRequest,
   VerifyOtpResponse,
-} from "@/modules/auth/types/auth";
-import { store } from "@/modules/shared/store/store";
+} from "@/auth/types/auth";
+import { store } from "@/shared/store/store";
 import { setAccessToken, setLogout, setUser } from "../slices/authSlide";
 
 export const authApi = appApi.injectEndpoints({
@@ -24,8 +24,8 @@ export const authApi = appApi.injectEndpoints({
       }),
       async onQueryStarted(_, { queryFulfilled }) {
         const res = await queryFulfilled;
-        store.dispatch(setAccessToken(res.data.accessToken));
         store.dispatch(setUser(res.data.user));
+        store.dispatch(setAccessToken(res.data.accessToken));
       },
     }),
 
@@ -37,8 +37,8 @@ export const authApi = appApi.injectEndpoints({
       }),
       async onQueryStarted(_, { queryFulfilled }) {
         const res = await queryFulfilled;
-        store.dispatch(setAccessToken(res.data.accessToken));
         store.dispatch(setUser(res.data.user));
+        store.dispatch(setAccessToken(res.data.accessToken));
       },
     }),
 

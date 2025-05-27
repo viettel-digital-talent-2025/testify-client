@@ -5,10 +5,10 @@ import {
   useAppDispatch,
   useAppSelector,
   useNotification,
-} from "@/modules/shared/hooks";
-import { selectEmail, setOtp } from "@/modules/auth/slices/recoveryPassSlice";
-import { useVerifyOtpMutation } from "@/modules/auth/apis/authApi";
-import { ReduxUtils } from "@/modules/shared/utils";
+} from "@/shared/hooks";
+import { selectEmail, setOtp } from "@/auth/slices/recoveryPassSlice";
+import { useVerifyOtpMutation } from "@/auth/apis/authApi";
+import { ReduxUtils } from "@/shared/utils";
 
 export default function VerifyOTPForm() {
   const email = useAppSelector(selectEmail);

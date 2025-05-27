@@ -1,17 +1,13 @@
 "use client";
 import { Form, Input, Button } from "antd";
-import { useResetPasswordMutation } from "@/modules/auth/apis/authApi";
+import { useResetPasswordMutation } from "@/auth/apis/authApi";
 import {
   useAppDispatch,
   useAppSelector,
   useNotification,
-} from "@/modules/shared/hooks";
+} from "@/shared/hooks";
 import { useRouter } from "next/navigation";
-import {
-  reset,
-  selectEmail,
-  selectOtp,
-} from "@/modules/auth/slices/recoveryPassSlice";
+import { reset, selectEmail, selectOtp } from "@/auth/slices/recoveryPassSlice";
 
 export default function ResetPasswordForm() {
   const dispatch = useAppDispatch();

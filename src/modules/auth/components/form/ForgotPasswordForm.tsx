@@ -1,10 +1,10 @@
 "use client";
 import { useRouter } from "next/navigation";
 import { Form, Input, Button } from "antd";
-import { useForgotPasswordMutation } from "@/modules/auth/apis/authApi";
-import { useAppDispatch, useNotification } from "@/modules/shared/hooks";
-import { setEmail } from "@/modules/auth/slices/recoveryPassSlice";
-import { ReduxUtils } from "@/modules/shared/utils";
+import { useForgotPasswordMutation } from "@/auth/apis/authApi";
+import { useAppDispatch, useNotification } from "@/shared/hooks";
+import { setEmail } from "@/auth/slices/recoveryPassSlice";
+import { ReduxUtils } from "@/shared/utils";
 
 export default function ForgotPasswordForm() {
   const dispatch = useAppDispatch();

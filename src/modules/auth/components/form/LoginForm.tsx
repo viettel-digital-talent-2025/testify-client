@@ -1,9 +1,9 @@
 "use client";
 import { Form, Input, Button } from "antd";
 import { LockOutlined, MailOutlined } from "@ant-design/icons";
-import { useLoginMutation } from "@/modules/auth/apis/authApi";
-import { useNotification } from "@/modules/shared/hooks";
-import { ReduxUtils } from "@/modules/shared/utils";
+import { useLoginMutation } from "@/auth/apis/authApi";
+import { useNotification } from "@/shared/hooks";
+import { ReduxUtils } from "@/shared/utils";
 import { useRouter } from "next/navigation";
 import Paragraph from "antd/es/typography/Paragraph";
 import Text from "antd/es/typography/Text";

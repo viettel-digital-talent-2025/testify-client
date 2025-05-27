@@ -1,6 +1,6 @@
 "use client";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { RootState } from "@/modules/shared/store/store";
+import { RootState } from "@/shared/store/store";
 
 export type RecoveryPassState = {
   email?: string;

@@ -1,7 +1,7 @@
 "use client";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { RootState } from "@/modules/shared/store/store";
-import { User } from "@/modules/auth/types/auth";
+import { RootState } from "@/shared/store/store";
+import { User } from "@/auth/types/auth";
 
 export type AuthState = {
   user?: User;

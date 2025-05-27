@@ -2,9 +2,9 @@
 import { useRouter } from "next/navigation";
 import { Form, Input, Button, Space } from "antd";
 import { LockOutlined, MailOutlined, UserOutlined } from "@ant-design/icons";
-import { useRegisterMutation } from "@/modules/auth/apis/authApi";
-import { useNotification } from "@/modules/shared/hooks";
-import { ReduxUtils } from "@/modules/shared/utils";
+import { useRegisterMutation } from "@/auth/apis/authApi";
+import { useNotification } from "@/shared/hooks";
+import { ReduxUtils } from "@/shared/utils";
 
 export default function RegisterForm() {
   const router = useRouter();
