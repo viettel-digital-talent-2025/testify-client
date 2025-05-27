@@ -1,5 +1,5 @@
 "use client";
-import { Card, Form, Row, Col, FormInstance } from "antd";
+import { Card, Form, Row, Col } from "antd";
 import {
   NameInput,
   DescriptionInput,
@@ -10,14 +10,10 @@ import {
   ScenarioFlowInput,
 } from "./details";
 import Title from "antd/es/typography/Title";
+import { useScenarioFormContext } from "@/scenarios/contexts/ScenarioFormContext";
 
-interface ScenarioDetailsCardProps {
-  form: FormInstance;
-}
-
-export default function ScenarioDetailsCard({
-  form,
-}: ScenarioDetailsCardProps) {
+export default function ScenarioDetailsCard() {
+  const { form } = useScenarioFormContext();
   return (
     <Card>
       <Form form={form} layout="vertical">

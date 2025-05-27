@@ -1,4 +1,4 @@
-import { colors } from "@/modules/shared/constants/colors";
+import { colors } from "@/shared/constants/colors";
 import { Card } from "antd";
 
 interface ScenarioTypeCardProps {

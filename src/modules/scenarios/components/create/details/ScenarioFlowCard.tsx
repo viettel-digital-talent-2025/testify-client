@@ -1,6 +1,6 @@
 import { Card } from "antd";
 import { cloneElement } from "react";
-import { colors } from "@/modules/shared/constants/colors";
+import { colors } from "@/shared/constants/colors";
 import Title from "antd/es/typography/Title";
 import Text from "antd/es/typography/Text";
 

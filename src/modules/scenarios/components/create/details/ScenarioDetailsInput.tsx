@@ -1,55 +1,35 @@
 "use client";
 import { Input, Row, Col, InputNumber, TimePicker, Select, Form } from "antd";
 import { PlusCircleOutlined, BranchesOutlined } from "@ant-design/icons";
-import {
-  useAppDispatch,
-  useAppSelector,
-} from "@/modules/shared/hooks/useStore";
-import {
-  // set
-  setType,
-  setFlow,
-  // select
-  selectType,
-  selectFlow,
-  // types
-} from "@/modules/scenarios/slices/createScenarioSlice";
+import { ScenarioType, ScenarioFlowType } from "@/scenarios/types/scenario";
+import { useGetScenarioGroupsQuery } from "@/scenarios/apis/scenarioGroupApi";
+import { useScenarioFormContext } from "@/scenarios/contexts/ScenarioFormContext";
+import { getScenarioIconByType } from "@/scenarios/components/utils";
 import { ScenarioTypeCard, ScenarioFlowCard } from ".";
 import TextArea from "antd/es/input/TextArea";
-import {
-  GlobalOutlined,
-  ApiOutlined,
-  DatabaseOutlined,
-  UserOutlined,
-} from "@ant-design/icons";
-import {
-  ScenarioType,
-  ScenarioFlowType,
-} from "@/modules/scenarios/types/scenario";
-import { useGetScenarioGroupsQuery } from "@/modules/scenarios/apis/scenarioGroupApi";
 import dayjs from "dayjs";
 
 const scenarioTypes = [
   {
     label: "Website",
     value: ScenarioType.WEB,
-    icon: <GlobalOutlined />,
+    icon: getScenarioIconByType({ type: ScenarioType.WEB }),
   },
   {
     label: "API",
     value: ScenarioType.API,
-    icon: <ApiOutlined />,
+    icon: getScenarioIconByType({ type: ScenarioType.API }),
   },
-  {
-    label: "Database",
-    value: ScenarioType.DATABASE,
-    icon: <DatabaseOutlined />,
-  },
-  {
-    label: "User Flow",
-    value: ScenarioType.USER_FLOW,
-    icon: <UserOutlined />,
-  },
+  // {
+  //   label: "Database",
+  //   value: ScenarioType.DATABASE,
+  //   icon: getScenarioIconByType({ type: ScenarioType.DATABASE }),
+  // },
+  // {
+  //   label: "User Flow",
+  //   value: ScenarioType.USER_FLOW,
+  //   icon: getScenarioIconByType({ type: ScenarioType.USER_FLOW }),
+  // },
 ];
 
 export const NameInput = () => {
@@ -143,8 +123,15 @@ export const GroupInput = () => {
 };
 
 export const ScenarioTypeInput = () => {
-  const dispatch = useAppDispatch();
-  const type = useAppSelector(selectType);
+  const { form } = useScenarioFormContext();
+  const type = Form.useWatch("type", form);
+
+  const onClick = async (value: ScenarioType) => {
+    form.setFieldsValue({ type: value });
+    if (value === ScenarioType.USER_FLOW) {
+      form.setFieldsValue({ flowType: ScenarioFlowType.MULTI });
+    }
+  };
 
   return (
     <Form.Item
@@ -160,14 +147,7 @@ export const ScenarioTypeInput = () => {
               icon={icon}
               label={label}
               isSelected={type === value}
-              onClick={
-                type === ScenarioType.USER_FLOW
-                  ? () => {
-                      dispatch(setFlow(ScenarioFlowType.MULTI));
-                      dispatch(setType(value));
-                    }
-                  : () => dispatch(setType(value))
-              }
+              onClick={() => onClick(value)}
             />
           </Col>
         ))}
@@ -177,12 +157,18 @@ export const ScenarioTypeInput = () => {
 };
 
 export const ScenarioFlowInput = () => {
-  const dispatch = useAppDispatch();
-  const type = useAppSelector(selectType);
-  const flow = useAppSelector(selectFlow);
+  const { form } = useScenarioFormContext();
+  const type = Form.useWatch("type", form);
+  const flow = Form.useWatch("flowType", form);
 
   return (
-    <Form.Item name="type" label="Flow" required style={{ margin: 0 }}>
+    <Form.Item
+      label="Flow"
+      name="flowType"
+      required
+      initialValue={ScenarioFlowType.SIMPLE}
+      style={{ margin: 0 }}
+    >
       <Row gutter={16}>
         {type !== ScenarioType.USER_FLOW && (
           <>
@@ -192,7 +178,9 @@ export const ScenarioFlowInput = () => {
                 title="Simple Scenario"
                 description="Single endpoint or simple flow"
                 isSelected={flow === ScenarioFlowType.SIMPLE}
-                onClick={() => dispatch(setFlow(ScenarioFlowType.SIMPLE))}
+                onClick={() =>
+                  form.setFieldsValue({ flowType: ScenarioFlowType.SIMPLE })
+                }
               />
             </Col>
           </>
@@ -203,7 +191,9 @@ export const ScenarioFlowInput = () => {
             title="Multi-Flow Scenario"
             description="Complex user journeys with multiple paths"
             isSelected={flow === ScenarioFlowType.MULTI}
-            onClick={() => dispatch(setFlow(ScenarioFlowType.MULTI))}
+            onClick={() =>
+              form.setFieldsValue({ flowType: ScenarioFlowType.MULTI })
+            }
           />
         </Col>
       </Row>
