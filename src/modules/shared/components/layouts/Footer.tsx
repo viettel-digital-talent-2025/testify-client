@@ -1,5 +1,5 @@
 import { Footer as AntFooter } from "antd/es/layout/layout";
-import { colors } from "@/modules/shared/constants/colors";
+import { colors } from "@/shared/constants/colors";
 import Paragraph from "antd/es/typography/Paragraph";
 
 export default function Footer() {

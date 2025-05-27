@@ -2,7 +2,7 @@
 import { Dropdown, Menu, MenuProps, Avatar, Button, Space } from "antd";
 import { usePathname, useRouter } from "next/navigation";
 import { Header as AntHeader } from "antd/es/layout/layout";
-import { colors } from "@/modules/shared/constants/colors";
+import { colors } from "@/shared/constants/colors";
 import Title from "antd/es/typography/Title";
 import Link from "next/link";
 import {
@@ -18,9 +18,10 @@ import {
   CheckCircleOutlined,
   LoginOutlined,
 } from "@ant-design/icons";
-import { useAppSelector } from "@/modules/shared/hooks";
-import { selectUser } from "@/modules/auth/slices/authSlide";
-import { useLogoutMutation } from "@/modules/auth/apis/authApi";
+import { useAppSelector } from "@/shared/hooks";
+import { selectUser } from "@/auth/slices/authSlide";
+import { useLogoutMutation } from "@/auth/apis/authApi";
+import Text from "antd/es/typography/Text";
 
 const UserItems: MenuProps["items"] = [
   {
@@ -78,7 +79,7 @@ export default function Header() {
       style={{
         position: "fixed",
         top: 0,
-        zIndex: 9999,
+        zIndex: 100,
         width: "100%",
         height: "max-content",
         display: "flex",
@@ -156,19 +157,22 @@ const UserMenu = () => {
   ];
 
   return (
-    <Dropdown
-      menu={{ items: dropdownItems, onClick: handleMenuClick }}
-      trigger={["click"]}
-    >
-      <Avatar
-        style={{
-          backgroundColor: colors.primary,
-          color: "white",
-          cursor: "pointer",
-        }}
+    <div className="flex items-center gap-2">
+      <Dropdown
+        menu={{ items: dropdownItems, onClick: handleMenuClick }}
+        trigger={["click"]}
       >
-        {user?.firstname?.[0]?.toUpperCase() || <UserOutlined />}
-      </Avatar>
-    </Dropdown>
+        <Avatar
+          style={{
+            backgroundColor: colors.primary,
+            color: "white",
+            cursor: "pointer",
+          }}
+        >
+          {user?.firstname?.[0]?.toUpperCase() || <UserOutlined />}
+        </Avatar>
+      </Dropdown>
+      <Text>Hi, {user?.firstname}</Text>
+    </div>
   );
 };

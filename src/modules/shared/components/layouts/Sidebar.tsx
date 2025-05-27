@@ -9,7 +9,7 @@ import {
   SettingOutlined,
 } from "@ant-design/icons";
 import { Menu } from "antd";
-import { colors } from "@/modules/shared/constants/colors";
+import { colors } from "@/shared/constants/colors";
 import Sider from "antd/es/layout/Sider";
 import Title from "antd/es/typography/Title";
 import Link from "next/link";
