@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
+  --background: #171717;
   --foreground: #171717;
 }
 
@@ -14,7 +14,7 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
+    --background: #171717;
     --foreground: #ededed;
   }
 }
@@ -26,5 +26,34 @@ body {
 }
 
 html {
+  background: var(--background);
   scroll-behavior: smooth;
 }
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+}
+
+/* .ant-picker-time-panel-cell.ant-picker-time-panel-cell-selected
+  .ant-picker-time-panel-cell-inner {
+  color: #000000 !important;
+}
+
+.ant-picker-time-panel-column {
+  scrollbar-color: #424242 transparent !important;
+  scrollbar-gutter: stable !important;
+}
+
+.ant-picker-time-panel-column:not(:last-child) {
+  border-right: 1px solid #424242 !important;
+} */

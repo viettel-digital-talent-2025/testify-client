@@ -3,8 +3,8 @@ import {
   FeaturesSection,
   BenefitsSection,
   CTASection,
-} from "@/modules/landing/components";
-import { Footer, Header } from "@/modules/shared/components/layouts";
+} from "@/landing/components";
+import { Footer, Header } from "@/shared/components/layouts";
 
 export default function LandingPage() {
   return (
