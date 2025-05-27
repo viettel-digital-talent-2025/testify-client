@@ -7,7 +7,7 @@ import {
   SafetyCertificateOutlined,
   ApiOutlined,
 } from "@ant-design/icons";
-import { colors } from "@/modules/shared/constants/colors";
+import { colors } from "@/shared/constants/colors";
 import Title from "antd/es/typography/Title";
 import Paragraph from "antd/es/typography/Paragraph";
 

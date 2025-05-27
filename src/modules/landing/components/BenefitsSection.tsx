@@ -5,7 +5,7 @@ import {
   BarChartOutlined,
   RocketOutlined,
 } from "@ant-design/icons";
-import { colors } from "@/modules/shared/constants/colors";
+import { colors } from "@/shared/constants/colors";
 import Title from "antd/es/typography/Title";
 import Paragraph from "antd/es/typography/Paragraph";
 import "./BenefitsSection.css";
@@ -109,9 +109,7 @@ export default function BenefitsSection() {
                       }}
                     >
                       <Title level={4}>{item.title}</Title>
-                      <Paragraph style={{ color: "#555" }}>
-                        {item.description}
-                      </Paragraph>
+                      <Paragraph>{item.description}</Paragraph>
                     </Card>
                   ),
                 };

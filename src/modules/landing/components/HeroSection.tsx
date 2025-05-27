@@ -1,9 +1,9 @@
 "use client";
-import "@/modules/shared/components/chartjs/config";
+import "@/shared/components/chartjs/config";
 import { Line } from "react-chartjs-2";
 import { Button, Row, Col, Space, Card } from "antd";
 import { ArrowRightOutlined } from "@ant-design/icons";
-import { colors } from "@/modules/shared/constants/colors";
+import { colors } from "@/shared/constants/colors";
 import Link from "next/link";
 import Title from "antd/es/typography/Title";
 import Paragraph from "antd/es/typography/Paragraph";
