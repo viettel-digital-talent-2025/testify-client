@@ -1,0 +1,11 @@
+.ant-tree-node-content-wrapper {
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+}
+
+.ant-tree-title {
+  width: calc(100% - 32px);
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
