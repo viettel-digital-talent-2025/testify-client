@@ -1,4 +1,4 @@
-export { default as WebConfig } from "./WebConfig";
-export { default as ApiConfig } from "./ApiConfig";
-// export { default as DatabaseConfig } from "./DatabaseConfig";
-// export { default as UserFlowConfig } from "./UserFlowConfig";
+export { default as WebConfigForm } from "./WebConfigForm";
+export { default as ApiConfigForm } from "./ApiConfigForm";
+export { default as DatabaseConfigForm } from "./DatabaseConfigForm";
+export { default as UserFlowConfigForm } from "./UserFlowConfigForm";

@@ -5,7 +5,7 @@ import {
   PlusOutlined,
   MinusCircleOutlined,
 } from "@ant-design/icons";
-import { BodyType, HttpMethod } from "@/modules/scenarios/types/config";
+import { BodyType, HttpMethod } from "@/scenarios/types/config";
 import { useCallback } from "react";
 import TextArea from "antd/es/input/TextArea";
 

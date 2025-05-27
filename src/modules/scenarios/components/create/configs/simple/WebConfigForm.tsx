@@ -1,5 +1,5 @@
 import UrlInput from "./input/WebConfigInput";
 
-export default function WebConfig() {
+export default function WebConfigForm() {
   return <UrlInput />;
 }
