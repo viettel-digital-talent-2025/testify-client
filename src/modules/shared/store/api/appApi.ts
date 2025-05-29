@@ -5,10 +5,11 @@ import {
   FetchArgs,
   fetchBaseQuery,
   FetchBaseQueryError,
+  BaseQueryApi,
 } from "@reduxjs/toolkit/query/react";
-import { RootState } from "@/modules/shared/store/store";
-import { setAccessToken, setLogout } from "@/modules/auth/redux/authSlide";
-import { RefreshTokenResponse } from "@/modules/auth/types/auth";
+import { RootState } from "@/shared/store/store";
+import { setAccessToken, setLogout } from "@/auth/slices/authSlide";
+import { RefreshTokenResponse } from "@/auth/types/auth";
 
 const baseQuery = fetchBaseQuery({
   baseUrl: process.env.NEXT_PUBLIC_BACKEND_URL,
@@ -24,6 +25,33 @@ const baseQuery = fetchBaseQuery({
   },
 });
 
+let isRefreshing = false;
+let refreshPromise: Promise<string | null> | null = null;
+
+const refreshToken = async (
+  api: BaseQueryApi,
+  extraOptions: Record<string, unknown>,
+) => {
+  try {
+    const result = await baseQuery(
+      "/api/v1/auth/refresh-token",
+      api,
+      extraOptions,
+    );
+    if (result.data) {
+      const data = result.data as RefreshTokenResponse;
+      api.dispatch(setAccessToken(data.accessToken));
+      return data.accessToken;
+    } else {
+      api.dispatch(setLogout());
+      return null;
+    }
+  } finally {
+    isRefreshing = false;
+    refreshPromise = null;
+  }
+};
+
 const baseQueryWithReauth: BaseQueryFn<
   string | FetchArgs,
   unknown,
@@ -32,20 +60,20 @@ const baseQueryWithReauth: BaseQueryFn<
   let result = await baseQuery(args, api, extraOptions);
 
   if (result.error && result.error.status === 401) {
-    const refreshResult = await baseQuery(
-      "/api/v1/auth/refresh-token",
-      api,
-      extraOptions,
-    );
+    if (!isRefreshing) {
+      isRefreshing = true;
+      refreshPromise = refreshToken(api, extraOptions);
+    }
 
-    if (refreshResult.data) {
-      const data = refreshResult.data as RefreshTokenResponse;
-      api.dispatch(setAccessToken(data.accessToken));
+    const newAccessToken = await refreshPromise;
+
+    if (newAccessToken) {
       result = await baseQuery(args, api, extraOptions);
     } else {
       api.dispatch(setLogout());
     }
   }
+
   return result;
 };
 
@@ -53,5 +81,11 @@ export const appApi = createApi({
   reducerPath: "appApi",
   baseQuery: baseQueryWithReauth,
   endpoints: () => ({}),
-  tagTypes: ["Auth", "Scenario"],
+  tagTypes: [
+    "Auth",
+    "Scenario",
+    "ScenarioGroup",
+    "RunHistory",
+    "RealtimeMetrics",
+  ],
 });
