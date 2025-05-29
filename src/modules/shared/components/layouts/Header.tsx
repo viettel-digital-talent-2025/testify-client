@@ -9,7 +9,7 @@ import {
   DashboardOutlined,
   ExperimentOutlined,
   ScheduleOutlined,
-  BugOutlined,
+  // BugOutlined,
   UserOutlined,
   LogoutOutlined,
   HomeOutlined,
@@ -39,11 +39,11 @@ const UserItems: MenuProps["items"] = [
     icon: <ScheduleOutlined />,
     label: <Link href="/schedule">Schedule</Link>,
   },
-  {
-    key: "bottlenecks",
-    icon: <BugOutlined />,
-    label: <Link href="/bottlenecks">Bottlenecks</Link>,
-  },
+  // {
+  //   key: "bottlenecks",
+  //   icon: <BugOutlined />,
+  //   label: <Link href="/bottlenecks">Bottlenecks</Link>,
+  // },
 ];
 
 const GuestItems: MenuProps["items"] = [
@@ -103,16 +103,10 @@ export default function Header() {
         </Link>
       </Title>
       <Menu
-        theme="dark"
         mode="horizontal"
         selectedKeys={[current]}
         items={user ? UserItems : GuestItems}
-        style={{
-          flex: 3,
-          width: "100%",
-          justifyContent: "center",
-          background: colors.dark,
-        }}
+        style={{ flex: 3, width: "100%", justifyContent: "center" }}
       />
       <div className="flex flex-1 justify-end">
         {user ? <UserMenu /> : <GuestMenu />}
