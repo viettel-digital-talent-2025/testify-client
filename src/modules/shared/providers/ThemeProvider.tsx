@@ -15,6 +15,12 @@ export const theme = {
       bodyPadding: 12,
       headerPadding: 12,
     },
+    Tree: {
+      indentSize: 12,
+    },
+    TreeSelect: {
+      indentSize: 12,
+    },
   },
 };
 
