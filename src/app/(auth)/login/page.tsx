@@ -1,10 +1,10 @@
-import { Card } from "antd";
+import { LoginForm } from "@/auth/components/form";
 import {
-  FormTitle,
   FormDescription,
   FormFooter,
+  FormTitle,
 } from "@/auth/components/form/Form";
-import { LoginForm } from "@/auth/components/form";
+import { Card } from "antd";
 
 export default function LoginPage() {
   return (

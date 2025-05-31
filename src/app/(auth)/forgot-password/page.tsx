@@ -1,10 +1,10 @@
-import { Card } from "antd";
+import { ForgotPasswordForm } from "@/auth/components/form";
 import {
-  FormTitle,
   FormDescription,
   FormFooter,
+  FormTitle,
 } from "@/auth/components/form/Form";
-import { ForgotPasswordForm } from "@/auth/components/form";
+import { Card } from "antd";
 
 export default function ForgotPasswordPage() {
   return (
