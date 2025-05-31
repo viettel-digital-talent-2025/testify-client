@@ -1,10 +1,14 @@
 "use client";
 import { useGetMetricsQuery } from "@/scenarios/apis/metricsApi";
 import { selectIsScenarioRunning } from "@/scenarios/slices/metricsSlice";
-import { selectSelectedScenarioId } from "@/scenarios/slices/scenariosSlice";
+import {
+  selectSelectedScenario,
+  selectSelectedSteps,
+  setSelectedSteps,
+} from "@/scenarios/slices/scenariosSlice";
 import { colors } from "@/shared/constants/colors";
-import { useAppSelector } from "@/shared/hooks";
-import { Card, Col, Progress, Row, Spin } from "antd";
+import { useAppDispatch, useAppSelector } from "@/shared/hooks";
+import { Card, Col, Progress, Row, Select, Spin, Tag } from "antd";
 import Text from "antd/es/typography/Text";
 import {
   CategoryScale,
@@ -18,7 +22,7 @@ import {
   TooltipItem,
 } from "chart.js";
 import dayjs from "dayjs";
-import { useMemo } from "react";
+import { useCallback, useMemo } from "react";
 import { Line } from "react-chartjs-2";
 import { ChartItem, createChartData, createChartOptions } from "../utils";
 
@@ -33,17 +37,24 @@ ChartJS.register(
 );
 
 export function RealtimeMetricsChart({
+  id,
   flowId,
   stepId,
+  runHistoryId,
+  showFilter = false,
+  showScenarioName = false,
   showLastUpdated = true,
   showProgress = true,
 }: {
+  id?: string | null;
   flowId?: string;
   stepId?: string;
+  runHistoryId?: string;
+  showFilter?: boolean;
+  showScenarioName?: boolean;
   showLastUpdated?: boolean;
   showProgress?: boolean;
 }) {
-  const id = useAppSelector(selectSelectedScenarioId);
   const isRunning = useAppSelector((state) =>
     selectIsScenarioRunning(state, id as string),
   );
@@ -54,10 +65,11 @@ export function RealtimeMetricsChart({
       duration: "300",
       flowId,
       stepId,
+      runHistoryId,
     },
     {
-      pollingInterval: isRunning ? 1000 : 0,
       skip: !id,
+      pollingInterval: isRunning ? 1000 : 0,
     },
   );
 
@@ -79,62 +91,146 @@ export function RealtimeMetricsChart({
   }
 
   return (
-    <Row gutter={[16, 16]}>
-      <Col span={24}>
-        {showLastUpdated && (
+    <Card
+      title={
+        <div className="flex items-center justify-between">
           <div className="flex items-center justify-between">
-            <Text type="secondary">
-              Last updated:{" "}
-              {dayjs(metrics?.lastUpdated).format("YYYY-MM-DD HH:mm:ss")}
-            </Text>
-            <div className="flex gap-2">
-              <Text type="secondary">
-                Run at: {dayjs(metrics?.runAt).format("YYYY-MM-DD HH:mm:ss")} -
-              </Text>
-              <Text type="secondary">
-                End at:{" "}
-                {metrics?.endAt
-                  ? dayjs(metrics?.endAt).format("YYYY-MM-DD HH:mm:ss")
-                  : "N/A"}
-              </Text>
+            <div>
+              Realtime Metrics{" "}
+              {showScenarioName ? `- ${metrics?.scenarioName}` : ""}
             </div>
+            {isRunning && <Tag color="processing">Live</Tag>}
           </div>
-        )}
-        {showProgress && (
-          <Progress
-            percent={metrics?.progress ?? 0}
-            status={metrics?.progress === 100 ? "success" : "active"}
+          {showFilter && <RealtimeMetricsFilter />}
+        </div>
+      }
+    >
+      <Row gutter={[16, 16]}>
+        <Col span={24}>
+          {showLastUpdated && (
+            <div className="flex items-center justify-between">
+              <Text type="secondary">
+                Last updated:{" "}
+                {dayjs(metrics?.lastUpdated).format("YYYY-MM-DD HH:mm:ss")}
+              </Text>
+              <div className="flex gap-2">
+                <Text type="secondary">
+                  Run at: {dayjs(metrics?.runAt).format("YYYY-MM-DD HH:mm:ss")}{" "}
+                  -
+                </Text>
+                <Text type="secondary">
+                  End at:{" "}
+                  {metrics?.endAt
+                    ? dayjs(metrics?.endAt).format("YYYY-MM-DD HH:mm:ss")
+                    : "N/A"}
+                </Text>
+              </div>
+            </div>
+          )}
+          {showProgress && (
+            <Progress
+              size="small"
+              percent={metrics?.progress ?? 0}
+              status={metrics?.progress === 100 ? "success" : "active"}
+            />
+          )}
+        </Col>
+        <Col xs={24} md={8}>
+          <LineMetricsCard
+            data={metrics?.metrics?.latency ?? []}
+            label="Latency (ms)"
+            color={colors.blue}
+            valueKey="avg"
+            unit="ms"
           />
-        )}
-      </Col>
-      <Col xs={24} md={8}>
-        <LineMetricsCard
-          data={metrics?.metrics?.latency ?? []}
-          label="Latency (ms)"
-          color={colors.blue}
-          valueKey="avg"
-          unit="ms"
-        />
-      </Col>
-      <Col xs={24} md={8}>
-        <LineMetricsCard
-          data={metrics?.metrics?.throughput ?? []}
-          label="Throughput (req/s)"
-          color={colors.green}
-          valueKey="value"
-          unit="req/s"
-        />
-      </Col>
-      <Col xs={24} md={8}>
-        <LineMetricsCard
-          data={metrics?.metrics?.errorRate ?? []}
-          label="Error Rate (%)"
-          color={colors.error}
-          valueKey="value"
-          unit="%"
-        />
-      </Col>
-    </Row>
+        </Col>
+        <Col xs={24} md={8}>
+          <LineMetricsCard
+            data={metrics?.metrics?.throughput ?? []}
+            label="Throughput (req/s)"
+            color={colors.green}
+            valueKey="value"
+            unit="req/s"
+          />
+        </Col>
+        <Col xs={24} md={8}>
+          <LineMetricsCard
+            data={metrics?.metrics?.errorRate ?? []}
+            label="Error Rate (%)"
+            color={colors.error}
+            valueKey="value"
+            unit="%"
+          />
+        </Col>
+      </Row>
+    </Card>
+  );
+}
+
+function RealtimeMetricsFilter() {
+  const dispatch = useAppDispatch();
+  const scenario = useAppSelector(selectSelectedScenario);
+  const selectedSteps = useAppSelector(selectSelectedSteps);
+
+  const options = useMemo(() => {
+    const allSteps =
+      scenario?.flows
+        .map((flow) => {
+          return [
+            {
+              label: `${flow.name} - All Steps`,
+              value: `${flow.id}:`,
+              flowId: flow.id,
+              stepId: null,
+              flowName: flow.name,
+              stepName: null,
+            },
+            ...flow.steps.map((step) => ({
+              label: `${flow.name} - ${step.name}`,
+              value: `${flow.id}:${step.id}`,
+              flowId: flow.id,
+              stepId: step.id,
+              flowName: flow.name,
+              stepName: step.name,
+            })),
+          ];
+        })
+        .flat() || [];
+
+    return allSteps;
+  }, [scenario]);
+
+  const handleStepSelect = useCallback(
+    (values: string[]) => {
+      const newSelectedSteps = values.map((value) => {
+        const [flowId, stepId] = value.split(":");
+        const option = options.find((opt) => opt.value === value);
+        return {
+          flowId,
+          stepId,
+          flowName: option?.flowName || "",
+          stepName: option?.stepName || "",
+        };
+      });
+      dispatch(setSelectedSteps(newSelectedSteps));
+    },
+    [dispatch, options],
+  );
+
+  return (
+    <div className="flex items-center justify-between gap-4">
+      <Select
+        allowClear
+        mode="multiple"
+        placeholder="Select steps to compare metrics"
+        onChange={handleStepSelect}
+        options={options}
+        value={selectedSteps.map((step) => `${step.flowId}:${step.stepId}`)}
+        maxTagCount={1}
+        disabled={!scenario?.flows.length}
+        style={{ width: "300px" }}
+      />
+    </div>
   );
 }
 

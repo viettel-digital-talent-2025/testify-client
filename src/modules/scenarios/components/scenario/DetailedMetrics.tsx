@@ -1,11 +1,15 @@
 "use client";
 import { RealtimeMetricsChart } from "@/scenarios/components/scenario/metrics/RealtimeMetricsChart";
-import { selectSelectedSteps } from "@/scenarios/slices/scenariosSlice";
+import {
+  selectSelectedScenarioId,
+  selectSelectedSteps,
+} from "@/scenarios/slices/scenariosSlice";
 import { useAppSelector } from "@/shared/hooks";
 import { Card, Space } from "antd";
 import Title from "antd/es/typography/Title";
 
 export default function DetailedMetrics() {
+  const id = useAppSelector(selectSelectedScenarioId);
   const selectedSteps = useAppSelector(selectSelectedSteps);
 
   return (
@@ -20,6 +24,7 @@ export default function DetailedMetrics() {
                   {step.stepName && ` - ${step.stepName}`}
                 </Title>
                 <RealtimeMetricsChart
+                  id={id}
                   flowId={step.flowId}
                   stepId={step.stepId}
                   showLastUpdated={false}
