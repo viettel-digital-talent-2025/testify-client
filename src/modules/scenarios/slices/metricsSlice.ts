@@ -1,7 +1,7 @@
 "use client";
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { RootState } from "@/shared/store/store";
 import { RunHistoryStatus } from "@/scenarios/types/runHistory";
+import { RootState } from "@/shared/store/store";
+import { createSelector, createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 export interface MetricsState {
   isScenarioRunning: Record<string, boolean>;
@@ -23,6 +23,7 @@ const metricsSlice = createSlice({
     ) => {
       state.isScenarioRunning[action.payload.scenarioId] =
         action.payload.isRunning;
+        
     },
 
     setScenarioRunningStatus: (
@@ -53,3 +54,9 @@ export const selectIsScenarioRunning = (state: RootState, scenarioId: string) =>
 
 export const selectRunHistoryStatus = (state: RootState) =>
   state.metrics.runHistoryStatus;
+
+export const selectIsRunning = createSelector(
+  (state: RootState) => state.metrics.isScenarioRunning,
+  (isScenarioRunning) =>
+    Object.values(isScenarioRunning).some((isRunning) => isRunning),
+);
