@@ -1,19 +1,20 @@
+import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import { Button, Card, Tag, Tooltip } from "antd";
+import Paragraph from "antd/es/typography/Paragraph";
+import { ScenarioStrategy, StepCardProps } from ".";
+import { WebConfigForm } from "../components/create/configs/simple";
+import { WebConfig, WebConfigFormProps } from "../types/config";
 import {
   CreateScenarioFlow,
-  ScenarioType,
   ScenarioFlowStepType,
   ScenarioStepForm,
+  ScenarioType,
 } from "../types/scenario";
-import { ScenarioStrategy, StepCardProps } from ".";
-import { WebConfig, WebConfigFormProps } from "../types/config";
-import { WebConfigForm } from "../components/create/configs/simple";
-import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import {
-  getScenarioColorByType,
+  getScenarioColorByStepType,
+  getScenarioIconByStepType,
   getScenarioIconByType,
-} from "../components/utils/scenarioUtils";
-import Paragraph from "antd/es/typography/Paragraph";
+} from "../utils/scenarioUtils";
 
 export class WebStrategy implements ScenarioStrategy {
   getType(): ScenarioType {
@@ -21,6 +22,12 @@ export class WebStrategy implements ScenarioStrategy {
   }
 
   formatConfig(config: WebConfigFormProps): WebConfig {
+    return {
+      url: config.url,
+    };
+  }
+
+  formatForm(config: WebConfig): WebConfigFormProps {
     return {
       url: config.url,
     };
@@ -34,14 +41,16 @@ export class WebStrategy implements ScenarioStrategy {
       return [
         {
           name: "Main Flow",
-          description: "Web simple flow",
+          description: "",
           weight: 100,
+          order: index,
           steps: [
             {
               name: "Web Step",
               description: "Load test a web page",
               type: ScenarioFlowStepType.BROWSER,
               config,
+              order: index,
             },
           ],
         },
@@ -52,13 +61,15 @@ export class WebStrategy implements ScenarioStrategy {
       {
         name: `Flow ${index + 1}`,
         description: `Web simple flow ${index + 1}`,
-        weight: 0,
+        weight: 100,
+        order: index,
         steps: [
           {
             name: "Web Step",
             description: "Load test a web page",
             type: ScenarioFlowStepType.BROWSER,
             config,
+            order: index,
           },
         ],
       },
@@ -66,11 +77,13 @@ export class WebStrategy implements ScenarioStrategy {
   }
 
   createMultiFlow(flows: CreateScenarioFlow[]): CreateScenarioFlow[] {
-    return flows.map((flow) => ({
+    return flows.map((flow, flowIndex) => ({
       ...flow,
-      steps: flow.steps.map((step) => ({
+      order: flowIndex,
+      steps: flow.steps.map((step, stepIndex) => ({
         ...step,
         config: this.formatConfig(step.config as WebConfigFormProps),
+        order: stepIndex,
       })),
     }));
   }
@@ -103,13 +116,22 @@ export class WebStrategy implements ScenarioStrategy {
       <Card style={{ width: "100%" }}>
         <Tooltip>
           <div className="flex gap-2">
-            {getScenarioIconByType({ type: ScenarioType.WEB })}
+            {getScenarioIconByStepType({
+              type: ScenarioFlowStepType.BROWSER,
+            })}
             <div className="flex-1">
               <Paragraph ellipsis style={{ marginBottom: 8 }}>
                 {name}
-                <Tag color={getScenarioColorByType(ScenarioType.WEB)}>WEB</Tag>
+                <Tag
+                  style={{ marginLeft: 8 }}
+                  color={getScenarioColorByStepType(
+                    ScenarioFlowStepType.BROWSER,
+                  )}
+                >
+                  {ScenarioFlowStepType.BROWSER}
+                </Tag>
               </Paragraph>
-              <Paragraph type="secondary" style={{ margin: 0 }}>
+              <Paragraph type="secondary" ellipsis style={{ margin: 0 }}>
                 {url}
               </Paragraph>
             </div>

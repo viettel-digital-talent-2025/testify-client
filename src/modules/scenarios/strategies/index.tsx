@@ -1,16 +1,16 @@
 import {
-  ScenarioType,
-  CreateScenarioFlow,
-  ScenarioStepForm,
-} from "@/scenarios/types/scenario";
-import {
-  WebConfigFormProps,
+  ApiConfig,
   ApiConfigFormProps,
   WebConfig,
-  ApiConfig,
+  WebConfigFormProps,
 } from "@/scenarios/types/config";
-import { WebStrategy } from "./webStategy";
+import {
+  CreateScenarioFlow,
+  ScenarioStepForm,
+  ScenarioType,
+} from "@/scenarios/types/scenario";
 import { ApiStrategy } from "./ApiStrategy";
+import { WebStrategy } from "./webStategy";
 
 export interface StepCardProps {
   name: string;
@@ -24,6 +24,9 @@ export interface ScenarioStrategy {
   formatConfig(
     config: WebConfigFormProps | ApiConfigFormProps,
   ): WebConfig | ApiConfig;
+  formatForm(
+    config: WebConfig | ApiConfig,
+  ): WebConfigFormProps | ApiConfigFormProps;
   createSimpleFlow(
     config?: WebConfigFormProps | ApiConfigFormProps,
     index?: number,

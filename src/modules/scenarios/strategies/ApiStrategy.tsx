@@ -1,13 +1,9 @@
-import { Button, Tag, Tooltip, Card } from "antd";
-import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
-import { ScenarioStrategy, StepCardProps } from ".";
-import {
-  CreateScenarioFlow,
-  ScenarioType,
-  ScenarioFlowStepType,
-  ScenarioStepForm,
-} from "../types/scenario";
 import { ApiConfigForm } from "@/scenarios/components/create/configs/simple";
+import { getMethodColor } from "@/scenarios/utils";
+import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
+import { Button, Card, Tag, Tooltip } from "antd";
+import Paragraph from "antd/es/typography/Paragraph";
+import { ScenarioStrategy, StepCardProps } from ".";
 import {
   ApiConfig,
   ApiConfigFormProps,
@@ -15,11 +11,16 @@ import {
   HttpMethod,
 } from "../types/config";
 import {
+  CreateScenarioFlow,
+  ScenarioFlowStepType,
+  ScenarioStepForm,
+  ScenarioType,
+} from "../types/scenario";
+import {
+  getScenarioColorByStepType,
+  getScenarioIconByStepType,
   getScenarioIconByType,
-  getScenarioColorByType,
-} from "../components/utils/scenarioUtils";
-import { getMethodColor } from "@/scenarios/components/utils";
-import Paragraph from "antd/es/typography/Paragraph";
+} from "../utils/scenarioUtils";
 
 export class ApiStrategy implements ScenarioStrategy {
   getType(): ScenarioType {
@@ -37,7 +38,9 @@ export class ApiStrategy implements ScenarioStrategy {
     }
 
     let payload: string | Record<string, string> | undefined = undefined;
-    if (
+    if (config?.bodyType === BodyType.NONE) {
+      payload = undefined;
+    } else if (
       config?.bodyType === BodyType.FORM_DATA ||
       config?.bodyType === BodyType.URLENCODED
     ) {
@@ -47,12 +50,46 @@ export class ApiStrategy implements ScenarioStrategy {
           .map(({ key, value }) => [key, value]),
       );
     } else {
-      payload = config?.payload as string;
+      payload = ((config?.payload as string) || "").trim();
     }
 
     return {
       ...config,
       headers,
+      payload,
+    };
+  }
+
+  formatForm(config: ApiConfig): ApiConfigFormProps {
+    const headers = Object.entries(config.headers || {}).map(
+      ([key, value]) => ({
+        key,
+        value,
+      }),
+    );
+
+    let payload: Array<{ key: string; value: string }> | string | undefined;
+    if (config.bodyType === BodyType.NONE) {
+      payload = undefined;
+    } else if (
+      config.bodyType === BodyType.FORM_DATA ||
+      config.bodyType === BodyType.URLENCODED
+    ) {
+      payload = Object.entries(config.payload as Record<string, string>).map(
+        ([key, value]) => ({
+          key,
+          value,
+        }),
+      );
+    } else {
+      payload = ((config.payload as string) || "").trim();
+    }
+
+    return {
+      endpoint: config.endpoint,
+      method: config.method,
+      headers,
+      bodyType: config.bodyType,
       payload,
     };
   }
@@ -75,12 +112,14 @@ export class ApiStrategy implements ScenarioStrategy {
           name: "Main Flow",
           description: "API simple flow",
           weight: 100,
+          order: index,
           steps: [
             {
               name: "API Step",
               description: "Load test an API",
               type: ScenarioFlowStepType.API,
               config: formattedConfig,
+              order: index,
             },
           ],
         },
@@ -92,12 +131,14 @@ export class ApiStrategy implements ScenarioStrategy {
         name: `Flow ${index + 1}`,
         description: `API simple flow ${index + 1}`,
         weight: 0,
+        order: index,
         steps: [
           {
             name: "API Step",
             description: "Load test an API",
             type: ScenarioFlowStepType.API,
             config: formattedConfig,
+            order: index,
           },
         ],
       },
@@ -105,11 +146,13 @@ export class ApiStrategy implements ScenarioStrategy {
   }
 
   createMultiFlow(flows: CreateScenarioFlow[]): CreateScenarioFlow[] {
-    return flows.map((flow) => ({
+    return flows.map((flow, flowIndex) => ({
       ...flow,
-      steps: flow.steps.map((step) => ({
+      order: flowIndex,
+      steps: flow.steps.map((step, stepIndex) => ({
         ...step,
         config: this.formatConfig(step.config as ApiConfigFormProps),
+        order: stepIndex,
       })),
     }));
   }
@@ -148,17 +191,21 @@ export class ApiStrategy implements ScenarioStrategy {
       <Card style={{ width: "100%" }}>
         <Tooltip>
           <div className="flex gap-2">
-            {getScenarioIconByType({ type: ScenarioType.API })}
+            {getScenarioIconByStepType({
+              type: ScenarioFlowStepType.API,
+            })}
             <div className="flex-1">
               <Paragraph ellipsis style={{ marginBottom: 8 }}>
-                {name}{" "}
-                <Tag color={getScenarioColorByType(ScenarioType.API)}>API</Tag>
+                {name}
+                <Tag
+                  style={{ marginLeft: 8 }}
+                  color={getScenarioColorByStepType(ScenarioFlowStepType.API)}
+                >
+                  {ScenarioFlowStepType.API}
+                </Tag>
               </Paragraph>
               <div className="flex items-center gap-2">
-                <Tag
-                  color={getMethodColor(method)}
-                  style={{ fontSize: 12, marginRight: 0 }}
-                >
+                <Tag color={getMethodColor(method)} style={{ marginRight: 0 }}>
                   {method}
                 </Tag>
                 <Paragraph type="secondary" ellipsis style={{ margin: 0 }}>
