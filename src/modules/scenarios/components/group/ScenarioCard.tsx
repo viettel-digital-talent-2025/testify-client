@@ -1,21 +1,17 @@
 "use client";
-import { useRouter } from "next/navigation";
+import { setSelectedScenarioId } from "@/scenarios/slices/scenariosSlice";
+import { Scenario } from "@/scenarios/types/scenario";
+import { useAppDispatch } from "@/shared/hooks";
 import { Card, Space } from "antd";
-import { Scenario, ScenarioFlowType } from "@/scenarios/types/scenario";
+import dayjs from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime";
+import { useRouter } from "next/navigation";
+import { useCallback } from "react";
 import {
-  useRunLoadTestMutation,
-  useStopLoadTestMutation,
-} from "@/scenarios/apis/loadTestApi";
-import {
+  ScenarioCardFooter,
   ScenarioCardHeader,
   ScenarioCardStats,
-  ScenarioCardFlow,
-  ScenarioCardFooter,
 } from "./card";
-import { useAppDispatch } from "@/shared/hooks";
-import { setSelectedScenarioId } from "@/scenarios/slices/scenariosSlice";
-import relativeTime from "dayjs/plugin/relativeTime";
-import dayjs from "dayjs";
 dayjs.extend(relativeTime);
 
 interface ScenarioCardProps {
@@ -27,30 +23,20 @@ export default function ScenarioCard({ scenario }: ScenarioCardProps) {
   const router = useRouter();
   const flows = scenario.flows || [];
 
-  const [runScenario, { isLoading: isRunning }] = useRunLoadTestMutation();
-  const [stopScenario, { isLoading: isCanceling }] = useStopLoadTestMutation();
-
-  const onClick = () => {
+  const onClick = useCallback(() => {
     dispatch(setSelectedScenarioId(scenario.id));
     router.push(`/scenarios/${scenario.id}`);
-  };
-
-  const onRun = async () => {
-    await runScenario(scenario.id);
-  };
-
-  const onCancel = async () => {
-    await stopScenario(scenario.id);
-  };
+  }, [dispatch, router, scenario.id]);
 
   return (
     <Card hoverable onClick={onClick}>
-      <Space direction="vertical" size="middle" style={{ width: "100%" }}>
+      <Space direction="vertical" style={{ width: "100%" }}>
         {/* Header */}
         <ScenarioCardHeader
           name={scenario.name}
-          description={scenario.description || "No description"}
+          description={scenario.description}
           type={scenario.type}
+          flowType={scenario.flowType}
         />
 
         {/* Stats */}
@@ -59,21 +45,12 @@ export default function ScenarioCard({ scenario }: ScenarioCardProps) {
           flowType={scenario.flowType}
           virtualUsers={scenario.vus}
           duration={scenario.duration}
-          lastRun={scenario.lastRun}
         />
-
-        {/* Flows */}
-        {scenario.flowType === ScenarioFlowType.MULTI && (
-          <ScenarioCardFlow flows={flows} />
-        )}
 
         {/* Footer */}
         <ScenarioCardFooter
-          lastRun={scenario.lastRun}
-          isRunning={isRunning}
-          onRun={onRun}
-          isCanceling={isCanceling}
-          onCancel={onCancel}
+          scenarioId={scenario.id}
+          lastRun={scenario.runHistories[0]?.runAt}
         />
       </Space>
     </Card>

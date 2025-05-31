@@ -1,25 +1,18 @@
-import { Space, Button } from "antd";
-import {
-  ClockCircleOutlined,
-  PlayCircleOutlined,
-  CloseOutlined,
-} from "@ant-design/icons";
+import LoadTestButton from "@/scenarios/components/common/LoadTestButton";
+import { ClockCircleOutlined } from "@ant-design/icons";
+import { Space } from "antd";
 import Text from "antd/es/typography/Text";
 
 interface ScenarioCardFooterProps {
+  scenarioId: string;
   lastRun: string | null;
-  isRunning: boolean;
-  onRun: () => void;
-  isCanceling: boolean;
-  onCancel: () => void;
+  showLoadTestButton?: boolean;
 }
 
 export default function ScenarioCardFooter({
+  scenarioId,
   lastRun,
-  isRunning,
-  onRun,
-  isCanceling,
-  onCancel,
+  showLoadTestButton = true,
 }: ScenarioCardFooterProps) {
   return (
     <div className="flex items-center justify-between">
@@ -27,24 +20,11 @@ export default function ScenarioCardFooter({
         <ClockCircleOutlined />
         <Text type="secondary">Last run: {formatDate(lastRun)}</Text>
       </Space>
-      <Space>
-        {/* <Button
-          danger
-          icon={<CloseOutlined />}
-          loading={isCanceling}
-          onClick={onCancel}
-        >
-          Stop
-        </Button> */}
-        <Button
-          type="primary"
-          icon={<PlayCircleOutlined />}
-          loading={isRunning}
-          onClick={onRun}
-        >
-          Run
-        </Button>
-      </Space>
+      {showLoadTestButton && (
+        <Space>
+          <LoadTestButton scenarioId={scenarioId} />
+        </Space>
+      )}
     </div>
   );
 }

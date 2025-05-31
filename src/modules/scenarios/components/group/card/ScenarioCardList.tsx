@@ -1,7 +1,7 @@
-import { Card, Space, Tag } from "antd";
 import { ScenarioFlow } from "@/scenarios/types/scenario";
-import Title from "antd/es/typography/Title";
+import { Card, Space, Tag } from "antd";
 import Text from "antd/es/typography/Text";
+import Title from "antd/es/typography/Title";
 
 interface ScenarioCardListProps {
   flows: ScenarioFlow[];

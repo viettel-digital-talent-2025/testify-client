@@ -1,10 +1,10 @@
-import { Button, Badge, Dropdown } from "antd";
-import {
-  EllipsisOutlined,
-  EditOutlined,
-  DeleteOutlined,
-} from "@ant-design/icons";
 import { ScenarioGroup } from "@/scenarios/types/scenarioGroup";
+import {
+  DeleteOutlined,
+  EditOutlined,
+  EllipsisOutlined,
+} from "@ant-design/icons";
+import { Badge, Button, Dropdown } from "antd";
 
 interface GroupListItemProps {
   item: ScenarioGroup;

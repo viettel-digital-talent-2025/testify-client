@@ -1,6 +1,6 @@
-import { Space } from "antd";
 import { ScenarioFlow, ScenarioFlowType } from "@/scenarios/types/scenario";
-import { getScenarioStatsIcon } from "@/scenarios/components/utils/scenarioUtils";
+import { getScenarioStatsIcon } from "@/scenarios/utils/scenarioUtils";
+import { Space } from "antd";
 import Text from "antd/es/typography/Text";
 
 interface ScenarioCardStatsProps {
@@ -8,7 +8,6 @@ interface ScenarioCardStatsProps {
   flowType: ScenarioFlowType;
   virtualUsers: number | string;
   duration: number;
-  lastRun: string | null;
 }
 
 export default function ScenarioCardStats({

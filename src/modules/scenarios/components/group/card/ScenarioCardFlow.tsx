@@ -1,6 +1,6 @@
-import { Card, Space, Tag } from "antd";
 import { ScenarioFlow } from "@/scenarios/types/scenario";
 import { OrderedListOutlined } from "@ant-design/icons";
+import { Card, Space, Tag } from "antd";
 import Text from "antd/es/typography/Text";
 
 interface ScenarioCardFlowProps {
