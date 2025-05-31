@@ -1,48 +1,47 @@
 "use client";
-import { useState } from "react";
+import { useCallback } from "react";
 import { Form } from "antd";
 import {
-  useGetScenarioGroupsQuery,
   useCreateScenarioGroupMutation,
   useUpdateScenarioGroupMutation,
-  useDeleteScenarioGroupMutation,
 } from "../apis/scenarioGroupApi";
 import {
-  CreateScenarioGroup,
+  CreateScenarioGroupRequest,
   UpdateScenarioGroup,
-  ScenarioGroup,
 } from "../types/scenarioGroup";
 import { useNotification } from "@/shared/hooks";
+import { useAppDispatch, useAppSelector } from "@/shared/hooks/useStore";
+import { setCurrentEditGroup } from "../slices/scenarioGroupsSlice";
+import {
+  selectNewGroupOpen,
+  selectEditGroupOpen,
+  setNewGroupOpen,
+  setEditGroupOpen,
+  selectCurrentEditGroup,
+} from "../slices/scenarioGroupsSlice";
 
 export function useScenarioGroups() {
+  const dispatch = useAppDispatch();
   const [form] = Form.useForm();
   const { notify } = useNotification();
 
-  const { data } = useGetScenarioGroupsQuery();
-  const [newGroupOpen, setNewGroupOpen] = useState<boolean>(false);
-  const [editGroupOpen, setEditGroupOpen] = useState<boolean>(false);
-  const [currentGroup, setCurrentGroup] = useState<ScenarioGroup | null>(null);
-
+  const editGroupOpen = useAppSelector(selectEditGroupOpen);
+  const newGroupOpen = useAppSelector(selectNewGroupOpen);
+  const currentEditGroup = useAppSelector(selectCurrentEditGroup);
   const [createGroup] = useCreateScenarioGroupMutation();
   const [updateGroup] = useUpdateScenarioGroupMutation();
-  const [deleteGroup] = useDeleteScenarioGroupMutation();
 
-  const handleCreateGroup = async () => {
+  const handleCreateGroup = useCallback(async () => {
     const values = await form.validateFields();
-    const newGroup: CreateScenarioGroup = {
+    const newGroup: CreateScenarioGroupRequest = {
       name: values.name,
       description: values.description,
     };
 
     const res = await createGroup(newGroup);
     if (!res.error) {
-      setNewGroupOpen(false);
       form.resetFields();
-      notify({
-        message: "Group created successfully",
-        description: "The group has been created successfully",
-        notiType: "success",
-      });
+      dispatch(setNewGroupOpen(false));
     } else {
       notify({
         message: "Failed to create group",
@@ -50,27 +49,22 @@ export function useScenarioGroups() {
         notiType: "error",
       });
     }
-  };
+  }, [dispatch, notify, createGroup, form]);
 
-  const handleEditGroup = async () => {
-    if (!currentGroup) return;
+  const handleEditGroup = useCallback(async () => {
+    if (!currentEditGroup) return;
 
     const values = await form.validateFields();
     const updatedGroup: UpdateScenarioGroup = {
-      id: currentGroup.id,
+      id: currentEditGroup.id,
       name: values.name,
       description: values.description,
     };
 
     const res = await updateGroup(updatedGroup);
     if (!res.error) {
-      setEditGroupOpen(false);
       form.resetFields();
-      notify({
-        message: "Group updated successfully",
-        description: "The group has been updated successfully",
-        notiType: "success",
-      });
+      dispatch(setEditGroupOpen(false));
     } else {
       notify({
         message: "Failed to update group",
@@ -78,56 +72,28 @@ export function useScenarioGroups() {
         notiType: "error",
       });
     }
-  };
+  }, [dispatch, notify, updateGroup, form, currentEditGroup]);
 
-  const handleDeleteGroup = async (groupId: string) => {
-    const res = await deleteGroup(groupId);
-    if (!res.error) {
-      notify({
-        message: "Group deleted successfully",
-        description: "The group has been deleted successfully",
-        notiType: "success",
-      });
-    } else {
-      notify({
-        message: "Failed to delete group",
-        description: "Please try again",
-        notiType: "error",
-      });
-    }
-  };
-
-  const openEditDialog = (group: ScenarioGroup) => {
-    setCurrentGroup(group);
-    form.setFieldsValue({
-      name: group.name,
-      description: group.description,
-    });
-    setEditGroupOpen(true);
-  };
-
-  const closeNewGroupModal = () => {
-    setNewGroupOpen(false);
+  const closeNewGroupModal = useCallback(() => {
     form.resetFields();
-  };
+    dispatch(setNewGroupOpen(false));
+    dispatch(setCurrentEditGroup(null));
+  }, [dispatch, form]);
 
-  const closeEditGroupModal = () => {
-    setEditGroupOpen(false);
+  const closeEditGroupModal = useCallback(() => {
     form.resetFields();
-  };
+    dispatch(setEditGroupOpen(false));
+    dispatch(setCurrentEditGroup(null));
+  }, [dispatch, form]);
 
   return {
+    dispatch,
     form,
-    scenarios: data?.scenarios,
-    scenariosGroups: data?.scenarioGroups,
-    newGroupOpen,
+    currentEditGroup,
     editGroupOpen,
-    currentGroup,
-    setNewGroupOpen,
+    newGroupOpen,
     handleCreateGroup,
     handleEditGroup,
-    handleDeleteGroup,
-    openEditDialog,
     closeNewGroupModal,
     closeEditGroupModal,
   };
