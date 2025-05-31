@@ -2,10 +2,16 @@
   overflow: hidden;
   display: flex;
   align-items: center;
+  padding-left: 0px !important;
+  padding-right: 0px !important;
+  width: 100%;
+  flex: 1;
+  display: flex;
 }
 
 .ant-tree-title {
-  width: calc(100% - 32px);
+  width: calc(100% - 24px);
   overflow: hidden;
   text-overflow: ellipsis;
+  text-wrap: nowrap !important;
 }

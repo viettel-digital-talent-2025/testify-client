@@ -1,7 +1,7 @@
 "use client";
+import { useAppSelector } from "@/shared/hooks";
 import { List } from "antd";
 import { useGetScenariosByGroupQuery } from "../apis/scenarioApi";
-import { useAppSelector } from "@/shared/hooks";
 import { selectSelectedGroupId } from "../slices/scenariosSlice";
 import { ScenarioCard } from "./group";
 
@@ -22,11 +22,7 @@ export default function ScenariosList() {
         </List.Item>
       )}
       locale={{
-        emptyText: (
-          <div className="py-8 text-center">
-            <p className="text-gray-500">No scenarios found</p>
-          </div>
-        ),
+        emptyText: "No scenarios found",
       }}
     />
   );

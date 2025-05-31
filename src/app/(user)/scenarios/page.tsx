@@ -6,7 +6,7 @@ import { PageTitle } from "@/shared/components/pages";
 
 export default function ScenariosPage() {
   return (
-    <div className="flex flex-col gap-2">
+    <div className="flex h-full flex-col gap-2 ">
       <div className="flex items-center justify-between">
         <PageTitle
           title="Test Scenarios"

@@ -1,115 +1,87 @@
 "use client";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo, useState, memo } from "react";
 import { useRouter } from "next/navigation";
-import { Card, Button, Tree, TreeDataNode, TreeProps, Tooltip } from "antd";
+import {
+  Card,
+  Button,
+  Tree,
+  TreeDataNode,
+  TreeProps,
+  Tooltip,
+  Dropdown,
+  MenuProps,
+} from "antd";
 import {
   PlusOutlined,
   GroupOutlined,
   DownOutlined,
-  FileOutlined,
   DropboxOutlined,
+  MoreOutlined,
 } from "@ant-design/icons";
 import { GroupModal } from "./group";
-import { useScenarioGroups } from "../hooks/useScenarioGroups";
-import { useAppDispatch } from "@/shared/hooks/useStore";
+import { useAppDispatch, useAppSelector } from "@/shared/hooks/useStore";
 import {
   setSelectedGroupId,
   setSelectedScenarioId,
 } from "@/scenarios/slices/scenariosSlice";
 import { ScenarioGroup } from "../types/scenarioGroup";
 import { EventDataNode } from "antd/es/tree";
-import { getScenarioIconByType } from "./utils";
+import { getScenarioIconByType } from "../utils";
+import {
+  selectIsDragging,
+  setNewGroupOpen,
+  setEditGroupOpen,
+  setCurrentEditGroup,
+} from "@/scenarios/slices/scenarioGroupsSlice";
+import { setReverseIsDragging } from "../slices/scenarioGroupsSlice";
+import {
+  useDeleteScenarioGroupMutation,
+  useGetScenarioGroupsQuery,
+} from "../apis/scenarioGroupApi";
 import Title from "antd/es/typography/Title";
 import "./ScenarioGroups.css";
-
 const { DirectoryTree } = Tree;
 
-export default function ScenarioGroups() {
-  const {
-    form,
-    newGroupOpen,
-    editGroupOpen,
-    currentGroup,
-    setNewGroupOpen,
-    handleCreateGroup,
-    handleEditGroup,
-    closeNewGroupModal,
-    closeEditGroupModal,
-  } = useScenarioGroups();
-  const [isDragging, setIsDragging] = useState(false);
-
+const ScenarioGroupsHeader = memo(() => {
+  const dispatch = useAppDispatch();
   return (
-    <Card
-      style={{
-        height: "100%",
-        maxHeight: "100%",
-        display: "flex",
-        flexDirection: "column",
-      }}
-      styles={{
-        body: {
-          height: "100%",
-          maxHeight: "100%",
-          display: "flex",
-          flexDirection: "column",
-          overflow: "hidden",
-        },
-      }}
-    >
-      <div className="flex h-full flex-col gap-2">
-        <div className="flex items-center justify-between">
-          <div className="flex gap-2">
-            <GroupOutlined className="text-lg" />
-            <Title level={4} style={{ margin: 0 }}>
-              Groups
-            </Title>
-          </div>
-          <div>
-            <Tooltip title="Drag and drop to reorder">
-              <Button
-                size="small"
-                type="text"
-                icon={<DropboxOutlined />}
-                onClick={() => setIsDragging(!isDragging)}
-              />
-            </Tooltip>
-            <Button
-              size="small"
-              type="text"
-              icon={<PlusOutlined />}
-              onClick={() => setNewGroupOpen(true)}
-            />
-          </div>
-        </div>
-        <ScenarioGroupsTree isDragging={isDragging} />
+    <div className="flex items-center justify-between">
+      <div className="flex gap-2">
+        <GroupOutlined />
+        <Title level={5} style={{ margin: 0 }}>
+          Groups
+        </Title>
       </div>
-
-      <GroupModal
-        open={newGroupOpen}
-        isEdit={false}
-        onCancel={closeNewGroupModal}
-        onOk={handleCreateGroup}
-        form={form}
-      />
-
-      <GroupModal
-        open={editGroupOpen}
-        isEdit={true}
-        currentGroup={currentGroup}
-        onCancel={closeEditGroupModal}
-        onOk={handleEditGroup}
-        form={form}
-      />
-    </Card>
+      <div>
+        <Tooltip title="Drag and drop to reorder">
+          <Button
+            size="small"
+            type="text"
+            icon={<DropboxOutlined />}
+            onClick={() => dispatch(setReverseIsDragging())}
+          />
+        </Tooltip>
+        <Button
+          size="small"
+          type="text"
+          icon={<PlusOutlined />}
+          onClick={() => dispatch(setNewGroupOpen(true))}
+        />
+      </div>
+    </div>
   );
-}
+});
 
-const ScenarioGroupsTree = ({ isDragging }: { isDragging: boolean }) => {
+ScenarioGroupsHeader.displayName = "ScenarioGroupsHeader";
+
+const ScenarioGroupsTree = memo(() => {
   const dispatch = useAppDispatch();
   const router = useRouter();
+  const isDragging = useAppSelector(selectIsDragging);
   const [selectedKeys, setSelectedKeys] = useState<string[]>(["null"]);
   const [expandedKeys, setExpandedKeys] = useState<string[]>(["null"]);
-  const { scenarios, scenariosGroups } = useScenarioGroups();
+  const [deleteGroup] = useDeleteScenarioGroupMutation();
+  const { data } = useGetScenarioGroupsQuery();
 
   const onExpand: TreeProps["onExpand"] = useCallback(
     (
@@ -121,9 +93,17 @@ const ScenarioGroupsTree = ({ isDragging }: { isDragging: boolean }) => {
       },
     ) => {
       const key = info.node.key;
-      const expanded = !info.expanded;
+      const isExpanded = info.expanded;
       const isNotSelected = !selectedKeys.includes(key as string);
-      if (expanded && isNotSelected) return;
+      const target = info.nativeEvent.target as HTMLElement;
+      if (
+        isNotSelected &&
+        target.tagName !== "svg" &&
+        target.tagName !== "SPAN" &&
+        !isExpanded
+      ) {
+        return;
+      }
       setExpandedKeys(expandedKeys as string[]);
     },
     [selectedKeys],
@@ -159,23 +139,6 @@ const ScenarioGroupsTree = ({ isDragging }: { isDragging: boolean }) => {
     [dispatch, router],
   );
 
-  const onDrop: TreeProps["onDrop"] = (info) => {
-    console.log("onDrop", info);
-    const dropKey = info.node.key;
-    const dragKey = info.dragNode.key;
-    const dropPos = info.node.pos.split("-");
-    const dropPosition =
-      info.dropPosition - Number(dropPos[dropPos.length - 1]);
-
-    console.log("dropKey", dropKey);
-    console.log("dragKey", dragKey);
-    console.log("dropPosition", dropPosition);
-
-    if (dropPosition < 0) {
-      return;
-    }
-  };
-
   const mergedScenarioGroups: ScenarioGroup[] = useMemo(
     () => [
       {
@@ -183,22 +146,39 @@ const ScenarioGroupsTree = ({ isDragging }: { isDragging: boolean }) => {
         name: "No Group",
         description: "",
         scenarios:
-          scenarios?.map((scenario) => ({
+          data?.scenarios?.map((scenario) => ({
             id: scenario.id,
             name: scenario.name,
             type: scenario.type,
           })) || [],
       },
-      ...(scenariosGroups || []),
+      ...(data?.scenarioGroups || []),
     ],
-    [scenarios, scenariosGroups],
+    [data],
   );
 
   const treeData: TreeDataNode[] | undefined = useMemo(
     () =>
       mergedScenarioGroups?.map((group) => ({
         key: group.id || "null",
-        title: `${group.name} (${group.scenarios.length})`,
+        title: (
+          <div className="flex w-full items-center justify-between">
+            {`${group.name} (${group.scenarios.length})`}
+            {group.name !== "No Group" && (
+              <ScenarioGroupDropdown
+                onEditGroup={async (e) => {
+                  e.stopPropagation();
+                  dispatch(setCurrentEditGroup(group));
+                  dispatch(setEditGroupOpen(true));
+                }}
+                onDeleteGroup={async (e) => {
+                  e.stopPropagation();
+                  await deleteGroup(group.id);
+                }}
+              />
+            )}
+          </div>
+        ),
         children:
           group.scenarios.length > 0
             ? group.scenarios.map((scenario) => ({
@@ -210,15 +190,12 @@ const ScenarioGroupsTree = ({ isDragging }: { isDragging: boolean }) => {
                 {
                   key: `${group.id}-empty`,
                   title: "No scenarios",
-                  icon: <FileOutlined />,
                   disabled: true,
                 },
               ],
       })),
-    [mergedScenarioGroups],
+    [mergedScenarioGroups, dispatch, deleteGroup],
   );
-
-  console.log("rerender");
 
   return (
     <div
@@ -228,11 +205,10 @@ const ScenarioGroupsTree = ({ isDragging }: { isDragging: boolean }) => {
         maxHeight: "100%",
         overflowY: "auto",
         scrollbarGutter: "stable",
-        paddingRight: "4px",
       }}
     >
       <DirectoryTree
-        showIcon
+        // showIcon
         showLine
         blockNode
         draggable={isDragging}
@@ -242,8 +218,81 @@ const ScenarioGroupsTree = ({ isDragging }: { isDragging: boolean }) => {
         expandedKeys={expandedKeys}
         onExpand={onExpand}
         onSelect={onSelect}
-        onDrop={onDrop}
       />
     </div>
   );
-};
+});
+
+ScenarioGroupsTree.displayName = "ScenarioGroupsTree";
+
+export default memo(function ScenarioGroups() {
+  return (
+    <Card
+      style={{
+        height: "100%",
+        maxHeight: "100%",
+        display: "flex",
+        flexDirection: "column",
+      }}
+      styles={{
+        body: {
+          height: "100%",
+          maxHeight: "100%",
+          display: "flex",
+          flexDirection: "column",
+          overflow: "hidden",
+        },
+      }}
+    >
+      <div className="flex h-full flex-col gap-2">
+        <ScenarioGroupsHeader />
+        <ScenarioGroupsTree />
+      </div>
+      <GroupModal />
+    </Card>
+  );
+});
+
+const ScenarioGroupDropdown = memo(
+  ({
+    onEditGroup,
+    onDeleteGroup,
+  }: {
+    onEditGroup: (e: React.MouseEvent) => void;
+    onDeleteGroup: (e: React.MouseEvent) => void;
+  }) => {
+    const items: MenuProps["items"] = useMemo(
+      () => [
+        {
+          key: "edit",
+          label: "Edit",
+          onClick: ({ domEvent }) => {
+            onEditGroup(domEvent as React.MouseEvent);
+          },
+        },
+        {
+          key: "delete",
+          label: "Delete",
+          danger: true,
+          onClick: ({ domEvent }) => {
+            onDeleteGroup(domEvent as React.MouseEvent);
+          },
+        },
+      ],
+      [onEditGroup, onDeleteGroup],
+    );
+
+    return (
+      <Dropdown menu={{ items }} trigger={["click"]}>
+        <Button
+          type="text"
+          size="small"
+          icon={<MoreOutlined />}
+          onClick={(e) => e.stopPropagation()}
+        />
+      </Dropdown>
+    );
+  },
+);
+
+ScenarioGroupDropdown.displayName = "ScenarioGroupDropdown";
