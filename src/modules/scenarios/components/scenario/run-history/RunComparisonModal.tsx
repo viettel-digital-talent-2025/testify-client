@@ -1,29 +1,26 @@
 "use client";
-import { Modal, Table, Space, Tag, Tooltip } from "antd";
-import type { TableColumnType } from "antd";
-import { RunHistory } from "@/scenarios/types/runHistory";
-import { colors } from "@/shared/constants/colors";
 import {
-  ArrowUpOutlined,
-  ArrowDownOutlined,
-  InfoCircleOutlined,
-} from "@ant-design/icons";
-import { Metrics } from "@/scenarios/types/metrics";
-import Text from "antd/es/typography/Text";
-import {
-  selectSelectedRuns,
   selectIsCompareModalVisible,
+  selectSelectedRuns,
   setIsCompareModalVisible,
 } from "@/scenarios/slices/runHistoriesSlice";
-import { selectSelectedScenarioId } from "@/scenarios/slices/scenariosSlice";
+import { Metrics } from "@/scenarios/types/metrics";
+import { RunHistory } from "@/scenarios/types/runHistory";
+import { colors } from "@/shared/constants/colors";
 import { useAppDispatch, useAppSelector } from "@/shared/hooks";
-import { useMemo, useCallback } from "react";
+import {
+  ArrowDownOutlined,
+  ArrowUpOutlined,
+  InfoCircleOutlined,
+} from "@ant-design/icons";
+import { Modal, Space, Table, TableColumnType, Tag, Tooltip } from "antd";
+import Text from "antd/es/typography/Text";
 import dayjs from "dayjs";
+import { useCallback, useMemo } from "react";
 
 export default function RunComparisonModal() {
   const dispatch = useAppDispatch();
-  const scenarioId = useAppSelector(selectSelectedScenarioId);
-  const runs = useAppSelector((state) => selectSelectedRuns(state, scenarioId));
+  const runs = useAppSelector(selectSelectedRuns);
   const open = useAppSelector(selectIsCompareModalVisible);
 
   const onClose = useCallback(() => {

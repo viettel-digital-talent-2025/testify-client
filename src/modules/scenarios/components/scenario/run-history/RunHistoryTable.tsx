@@ -1,39 +1,49 @@
 "use client";
-import { useCallback, useMemo } from "react";
-import { Table, Tag, Button, Space, Tooltip, Progress } from "antd";
-import { TableColumnType, TablePaginationConfig, TableProps } from "antd";
-import { RunHistory, RunHistoryOrderBy } from "@/scenarios/types/runHistory";
-import { DownloadOutlined, LineChartOutlined } from "@ant-design/icons";
-import { RunHistoryStatus } from "@/scenarios/types/runHistory";
+import { useGetRunHistoriesQuery } from "@/scenarios/apis/runHistoryApi";
 import {
-  TableRowSelection,
-  SorterResult,
-  FilterValue,
-} from "antd/es/table/interface";
-import { useAppDispatch, useAppSelector } from "@/shared/hooks";
-import {
+  selectRunHistoryParams,
+  selectSelectedRunIds,
+  setIsDetailModalVisible,
   setParams,
   setSelectedRun,
   setSelectedRuns,
-  selectSelectedRunIds,
-  setIsDetailModalVisible,
-  selectRunHistoryParams,
 } from "@/scenarios/slices/runHistoriesSlice";
-import { useGetRunHistoriesQuery } from "@/scenarios/apis/runHistoryApi";
 import { selectSelectedScenarioId } from "@/scenarios/slices/scenariosSlice";
+import {
+  RunHistory,
+  RunHistoryOrderBy,
+  RunHistoryStatus,
+} from "@/scenarios/types/runHistory";
 import {
   getRunHistoryStatusColor,
   getRunHistoryStatusIcon,
-} from "@/scenarios/components/utils/runHistoryUtils";
+} from "@/scenarios/utils/runHistoryUtils";
+import { useAppDispatch, useAppSelector } from "@/shared/hooks";
+import { DownloadOutlined, LineChartOutlined } from "@ant-design/icons";
+import {
+  Button,
+  Progress,
+  Space,
+  Table,
+  TableColumnType,
+  TablePaginationConfig,
+  TableProps,
+  Tag,
+  Tooltip,
+} from "antd";
+import {
+  FilterValue,
+  SorterResult,
+  TableRowSelection,
+} from "antd/es/table/interface";
 import dayjs from "dayjs";
+import { useCallback, useMemo } from "react";
 
 export default function RunHistoryTable() {
   const dispatch = useAppDispatch();
   const scenarioId = useAppSelector(selectSelectedScenarioId);
   const params = useAppSelector(selectRunHistoryParams);
-  const selectedRunIds = useAppSelector((state) =>
-    selectSelectedRunIds(state, scenarioId),
-  );
+  const selectedRunIds = useAppSelector(selectSelectedRunIds);
 
   const { data, isLoading } = useGetRunHistoriesQuery(
     {
@@ -140,14 +150,15 @@ export default function RunHistoryTable() {
         key: "successRate",
         width: 100,
         sorter: true,
-        render: (rate: number) => (
-          <Progress
-            percent={rate * 100}
-            size="small"
-            status={
-              rate > 0.9 ? "success" : rate > 0.7 ? "normal" : "exception"
-            }
-          />
+        render: (rate: number) => `${(rate * 100).toFixed(2)}%`,
+      },
+      {
+        title: "Progress",
+        dataIndex: "progress",
+        key: "progress",
+        width: 100,
+        render: (progress: number) => (
+          <Progress percent={progress} size="small" />
         ),
       },
       {

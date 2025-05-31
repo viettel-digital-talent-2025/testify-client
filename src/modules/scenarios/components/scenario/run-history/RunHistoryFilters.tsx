@@ -1,17 +1,16 @@
 "use client";
-import { ChangeEvent, useMemo, useCallback } from "react";
-import { Space, DatePicker, Button } from "antd";
-import { BarChartOutlined } from "@ant-design/icons";
-import { useAppDispatch, useAppSelector } from "@/shared/hooks";
 import {
-  setParams,
   selectRunHistoryParams,
-  setIsCompareModalVisible,
   selectSelectedRuns,
+  setIsCompareModalVisible,
+  setParams,
 } from "@/scenarios/slices/runHistoriesSlice";
-import dayjs, { Dayjs } from "dayjs";
+import { useAppDispatch, useAppSelector } from "@/shared/hooks";
+import { BarChartOutlined } from "@ant-design/icons";
+import { Button, DatePicker, Space } from "antd";
 import Search from "antd/es/input/Search";
-import { selectSelectedScenarioId } from "@/scenarios/slices/scenariosSlice";
+import dayjs, { Dayjs } from "dayjs";
+import { ChangeEvent, useCallback, useMemo } from "react";
 const { RangePicker } = DatePicker;
 
 export default function RunHistoryFilters() {
@@ -83,8 +82,7 @@ const DateRangeFilter = () => {
 
 const CompareButton = () => {
   const dispatch = useAppDispatch();
-  const scenarioId = useAppSelector(selectSelectedScenarioId);
-  const runs = useAppSelector((state) => selectSelectedRuns(state, scenarioId));
+  const runs = useAppSelector(selectSelectedRuns);
 
   const onCompare = useCallback(() => {
     dispatch(setIsCompareModalVisible(true));

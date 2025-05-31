@@ -1,27 +1,27 @@
 "use client";
-import { useCallback } from "react";
 import {
-  Modal,
-  Space,
-  Row,
-  Col,
-  Card,
-  Statistic,
-  Descriptions,
-  Progress,
-} from "antd";
+  selectIsDetailModalVisible,
+  selectSelectedRun,
+  setIsDetailModalVisible,
+} from "@/scenarios/slices/runHistoriesSlice";
 import {
   getRunHistoryStatusColor,
   getRunHistoryStatusIcon,
-} from "@/scenarios/components/utils";
+} from "@/scenarios/utils";
 import { useAppDispatch, useAppSelector } from "@/shared/hooks";
 import {
-  selectSelectedRun,
-  setIsDetailModalVisible,
-  selectIsDetailModalVisible,
-} from "@/scenarios/slices/runHistoriesSlice";
+  Card,
+  Col,
+  Descriptions,
+  Modal,
+  Progress,
+  Row,
+  Space,
+  Statistic,
+} from "antd";
 import Text from "antd/es/typography/Text";
 import dayjs from "dayjs";
+import { useCallback } from "react";
 
 export default function RunDetailModal() {
   const dispatch = useAppDispatch();

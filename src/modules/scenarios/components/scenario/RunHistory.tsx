@@ -1,12 +1,12 @@
 "use client";
 import { Card, Space } from "antd";
-import {
-  RunHistoryTable,
-  RunHistoryFilters,
-  RunDetailModal,
-  RunComparisonModal,
-} from "./run-history";
 import Title from "antd/es/typography/Title";
+import {
+  RunComparisonModal,
+  RunDetailModal,
+  RunHistoryFilters,
+  RunHistoryTable,
+} from "./run-history";
 
 export default function RunHistory() {
   return (
