@@ -1,13 +1,13 @@
-import Link from "next/link";
-import { Button } from "antd";
 import { HomeOutlined } from "@ant-design/icons";
+import { Button } from "antd";
+import Link from "next/link";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
     <div
       className="flex h-full min-h-screen items-center justify-center"
       style={{
-        background: "url('/auth-bg.svg') no-repeat center center",
+        background: "url('/auth-bg.jpg') no-repeat center center",
         backgroundSize: "cover",
       }}
     >
