@@ -24,9 +24,7 @@ export const runHistoriesApi = appApi.injectEndpoints({
       GetRunHistoryRequest
     >({
       query: ({ scenarioId, ...params }) => ({
-        url: scenarioId
-          ? `api/v1/run-history/scenario/${scenarioId}`
-          : "api/v1/run-history",
+        url: `api/v1/run-history/scenario/${scenarioId}`,
         method: "GET",
         params,
       }),
