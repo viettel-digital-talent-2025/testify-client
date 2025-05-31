@@ -8,7 +8,7 @@ import {
 } from "react";
 import { FormInstance } from "antd/es/form/Form";
 import { Form } from "antd";
-import { ScenarioType, ScenarioFlowType } from "@/scenarios/types/scenario";
+import { ScenarioType } from "@/scenarios/types/scenario";
 import { getScenarioStrategy, ScenarioStrategy } from "@/scenarios/strategies";
 
 interface EditingStepProps {
@@ -26,6 +26,8 @@ interface ScenarioFormContextType {
   setModalVisible: (visible: boolean) => void;
   lockedIndexes: number[];
   setLockedIndexes: (indexes: number[]) => void;
+  isEditing: boolean;
+  setIsEditing: (isEditing: boolean) => void;
 }
 
 const FormContext = createContext<ScenarioFormContextType | null>(null);
@@ -42,6 +44,7 @@ export const useScenarioFormContext = (): ScenarioFormContextType => {
 export const FormProvider = ({ children }: { children: React.ReactNode }) => {
   const [form] = Form.useForm();
   const type = Form.useWatch("type", form);
+  const [isEditing, setIsEditing] = useState<boolean>(false);
   const [strategy, setStrategy] = useState<ScenarioStrategy>(
     getScenarioStrategy(ScenarioType.WEB),
   );
@@ -51,23 +54,6 @@ export const FormProvider = ({ children }: { children: React.ReactNode }) => {
   });
   const [modalVisible, setModalVisible] = useState<boolean>(false);
   const [lockedIndexes, setLockedIndexes] = useState<number[]>([]);
-
-  useEffect(() => {
-    const setDefaultValues = async () => {
-      const [type, flow] = await Promise.all([
-        form.getFieldValue("type"),
-        form.getFieldValue("flow"),
-      ]);
-      if (!type || !flow) {
-        await form.setFieldsValue({
-          type: ScenarioType.WEB,
-          flowType: ScenarioFlowType.SIMPLE,
-        });
-      }
-    };
-
-    setDefaultValues();
-  }, [form]);
 
   useEffect(() => {
     setStrategy(getScenarioStrategy(type));
@@ -93,6 +79,8 @@ export const FormProvider = ({ children }: { children: React.ReactNode }) => {
         setModalVisible,
         lockedIndexes,
         setLockedIndexes,
+        isEditing,
+        setIsEditing,
       }}
     >
       {children}
