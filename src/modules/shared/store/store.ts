@@ -1,28 +1,44 @@
 "use client";
-import createWebStorage from "redux-persist/lib/storage/createWebStorage";
-import autoMergeLevel2 from "redux-persist/lib/stateReconciler/autoMergeLevel2";
+import authReducer, { AuthState } from "@/auth/slices/authSlide";
+import recoveryPassReducer, {
+  RecoveryPassState,
+} from "@/auth/slices/recoveryPassSlice";
+import dashboardReducer, {
+  DashboardState,
+} from "@/dashboard/slices/dashboardSlice";
+import createScenarioReducer, {
+  CreateScenarioState,
+} from "@/scenarios/slices/createScenarioSlice";
+import metricsReducer, { MetricsState } from "@/scenarios/slices/metricsSlice";
+import runHistoryReducer, {
+  RunHistoryState,
+} from "@/scenarios/slices/runHistoriesSlice";
+import scenarioGroupsReducer, {
+  ScenarioGroupState,
+} from "@/scenarios/slices/scenarioGroupsSlice";
+import scenariosReducer, {
+  ScenariosState,
+} from "@/scenarios/slices/scenariosSlice";
+import { appApi } from "@/shared/store/api/appApi";
+import {
+  Action,
+  combineReducers,
+  configureStore,
+  Reducer,
+} from "@reduxjs/toolkit";
 import { setupListeners } from "@reduxjs/toolkit/query";
 import {
-  configureStore,
-  combineReducers,
-  Reducer,
-  Action,
-} from "@reduxjs/toolkit";
-import {
-  persistStore,
-  persistReducer,
   FLUSH,
-  REHYDRATE,
   PAUSE,
   PERSIST,
+  persistReducer,
+  persistStore,
   PURGE,
   REGISTER,
+  REHYDRATE,
 } from "redux-persist";
-import { appApi } from "@/modules/shared/store/api/appApi";
-import authReducer, { AuthState } from "@/modules/auth/redux/authSlide";
-// import dashboardReducer, {
-//   DashboardState,
-// } from "@/modules/shared/store/slices/dashboardSlice";
+import autoMergeLevel2 from "redux-persist/lib/stateReconciler/autoMergeLevel2";
+import createWebStorage from "redux-persist/lib/storage/createWebStorage";
 
 const createNoopStorage = () => {
   return {
@@ -46,18 +62,39 @@ const storage =
 export type RootState = {
   [appApi.reducerPath]: ReturnType<typeof appApi.reducer>;
   auth: AuthState;
+  recoveryPass: RecoveryPassState;
+  dashboard: DashboardState;
+  scenarios: ScenariosState;
+  scenarioGroups: ScenarioGroupState;
+  createScenario: CreateScenarioState;
+  metrics: MetricsState;
+  runHistories: RunHistoryState;
 };
 
 const persistConfig = {
   key: "root",
   storage,
   stateReconciler: autoMergeLevel2,
-  // whitelist: ["auth"],
+  whitelist: ["auth"],
+  blacklist: [
+    "recoveryPass",
+    "dashboard",
+    "createScenario",
+    "runHistories",
+    "scenarioGroups",
+  ],
 };
 
 const appReducer = combineReducers({
   [appApi.reducerPath]: appApi.reducer,
   auth: authReducer,
+  recoveryPass: recoveryPassReducer,
+  dashboard: dashboardReducer,
+  scenarios: scenariosReducer,
+  scenarioGroups: scenarioGroupsReducer,
+  createScenario: createScenarioReducer,
+  metrics: metricsReducer,
+  runHistories: runHistoryReducer,
 });
 
 const rootReducer: Reducer<RootState, Action> = (state, action) => {
