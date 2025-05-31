@@ -87,5 +87,6 @@ export const appApi = createApi({
     "ScenarioGroup",
     "RunHistory",
     "RealtimeMetrics",
+    "Schedule",
   ],
 });
