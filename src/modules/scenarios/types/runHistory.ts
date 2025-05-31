@@ -35,6 +35,7 @@ export interface RunHistory {
   successRate: number;
   rawResultUrl: string | null;
   metrics: RunHistoryMetrics | null;
+  progress: number;
   createdAt: string;
   updatedAt: string;
 }

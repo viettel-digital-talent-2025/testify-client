@@ -19,6 +19,7 @@ export interface Metrics {
 
 export interface RealtimeMetricsQueryParams {
   scenarioId: string;
+  runHistoryId?: string;
   duration?: string;
   flowId?: string;
   stepId?: string;
@@ -54,6 +55,8 @@ export interface RealtimeMetrics {
 
 export interface RealtimeMetricsResponse {
   scenarioId: string;
+  runHistoryId?: string;
+  scenarioName?: string;
   duration: string;
   interval: string;
   metrics: RealtimeMetrics;
