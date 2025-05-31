@@ -1,10 +1,10 @@
 "use client";
-import { Row, Col } from "antd";
+import { Col, Row } from "antd";
 import {
-  FlowNameInput,
   FlowDescriptionInput,
-  FlowWeightInput,
+  FlowNameInput,
   FlowStepsInput,
+  FlowWeightInput,
 } from "./FlowInput";
 
 interface FlowContentProps {

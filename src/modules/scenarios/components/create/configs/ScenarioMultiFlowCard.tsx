@@ -1,33 +1,38 @@
 "use client";
-import { useState, useEffect, useCallback } from "react";
-import { Card, Tabs, Form } from "antd";
-import { FlowContent, StepModal } from "./multi";
 import { useScenarioFormContext } from "@/scenarios/contexts/ScenarioFormContext";
+import { Card, Form, Space, Tabs, Tag } from "antd";
+import Paragraph from "antd/es/typography/Paragraph";
 import Title from "antd/es/typography/Title";
+import { useCallback, useEffect, useState } from "react";
+import { FlowContent, StepModal } from "./multi";
 
 export default function ScenarioMultiFlowCard() {
-  const { form, strategy } = useScenarioFormContext();
+  const { form, strategy, isEditing } = useScenarioFormContext();
   const type = Form.useWatch("type", form);
   const flows = Form.useWatch("flows", form);
   const [activeFlow, setActiveFlow] = useState<string>("0");
 
   useEffect(() => {
-    const createFirstFlow = async () => {
-      const flows = await form.getFieldValue(["flows"]);
+    const createFirstFlow = () => {
+      const flows = form.getFieldValue(["flows"]);
       if (!flows) {
-        await form.setFieldsValue({
+        form.setFieldsValue({
           flows: strategy.createSimpleFlow(),
         });
       }
     };
-    createFirstFlow();
-  }, [form, strategy]);
+    if (!isEditing) {
+      createFirstFlow();
+    }
+  }, [form, strategy, isEditing]);
 
   useEffect(() => {
-    form.setFieldsValue({
-      flows: strategy.createSimpleFlow(),
-    });
-  }, [form, strategy, type]);
+    if (!isEditing) {
+      form.setFieldsValue({
+        flows: strategy.createSimpleFlow(),
+      });
+    }
+  }, [form, strategy, type, isEditing]);
 
   const redistributeWeights = useCallback(
     (
@@ -52,15 +57,18 @@ export default function ScenarioMultiFlowCard() {
         {(fields, { remove }) => {
           const active = activeFlow || fields[0]?.key?.toString();
 
-          const items = fields.map(({ key, name }, index) => {
+          const items = fields.map(({ key, name }) => {
             const flow = flows?.[name];
-            const label = flow
-              ? `${flow.name || `Flow ${index + 1}`} (${flow.weight.toFixed(2) || 0}%)`
-              : `Flow ${index + 1}`;
-
             return {
               key: key.toString(),
-              label,
+              label: (
+                <Space>
+                  <Paragraph ellipsis style={{ marginBottom: 0 }}>
+                    {flow?.name}
+                  </Paragraph>
+                  <Tag color="purple">{flow?.weight.toFixed(0)}%</Tag>
+                </Space>
+              ),
               children: <FlowContent key={key} flowName={name} />,
             };
           });
@@ -100,6 +108,7 @@ export default function ScenarioMultiFlowCard() {
 
           return (
             <Tabs
+              size="small"
               type="editable-card"
               activeKey={active}
               onChange={(key) => setActiveFlow(key)}

@@ -18,14 +18,10 @@ export default function ScenarioTypeCard(props: ScenarioTypeCardProps) {
         height: "100%",
         textAlign: "center",
         border: isSelected
-          ? `2px solid ${colors.primary}`
+          ? `1px solid ${colors.primary}`
           : `1px solid ${colors.border}`,
       }}
-      styles={{
-        body: {
-          padding: "16px",
-        },
-      }}
+      styles={{ body: { padding: "16px" } }}
     >
       <div className="mb-2 text-2xl">{icon}</div>
       <div>{label}</div>

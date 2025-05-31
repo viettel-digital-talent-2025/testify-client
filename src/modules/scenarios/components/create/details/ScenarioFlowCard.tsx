@@ -22,9 +22,10 @@ export default function ScenarioFlowCard(props: ScenarioFlowCardProps) {
         height: "100%",
         textAlign: "center",
         border: isSelected
-          ? `2px solid ${colors.primary}`
+          ? `1px solid ${colors.primary}`
           : `1px solid ${colors.border}`,
       }}
+      styles={{ body: { padding: "16px" } }}
     >
       {cloneElement(icon, {
         style: { fontSize: "1.875rem", marginBottom: "0.5rem" },

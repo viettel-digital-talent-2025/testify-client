@@ -1,16 +1,16 @@
 "use client";
-import { Card, Form, Row, Col } from "antd";
+import { useScenarioFormContext } from "@/scenarios/contexts/ScenarioFormContext";
+import { Card, Col, Form, Row } from "antd";
+import Title from "antd/es/typography/Title";
 import {
-  NameInput,
   DescriptionInput,
-  VusInput,
   DurationInput,
   GroupInput,
-  ScenarioTypeInput,
+  NameInput,
   ScenarioFlowInput,
+  ScenarioTypeInput,
+  VusInput,
 } from "./details";
-import Title from "antd/es/typography/Title";
-import { useScenarioFormContext } from "@/scenarios/contexts/ScenarioFormContext";
 
 export default function ScenarioDetailsCard() {
   const { form } = useScenarioFormContext();

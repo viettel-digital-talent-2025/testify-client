@@ -1,24 +1,25 @@
 "use client";
-import { Input, Row, Col, InputNumber, TimePicker, Select, Form } from "antd";
-import { PlusCircleOutlined, BranchesOutlined } from "@ant-design/icons";
-import { ScenarioType, ScenarioFlowType } from "@/scenarios/types/scenario";
 import { useGetScenarioGroupsQuery } from "@/scenarios/apis/scenarioGroupApi";
 import { useScenarioFormContext } from "@/scenarios/contexts/ScenarioFormContext";
-import { getScenarioIconByType } from "@/scenarios/components/utils";
-import { ScenarioTypeCard, ScenarioFlowCard } from ".";
+import { ScenarioFlowType, ScenarioType } from "@/scenarios/types/scenario";
+import { getScenarioIconByType } from "@/scenarios/utils";
+import { BranchesOutlined, PlusCircleOutlined } from "@ant-design/icons";
+import { Col, Form, Input, InputNumber, Row, Select, TimePicker } from "antd";
 import TextArea from "antd/es/input/TextArea";
 import dayjs from "dayjs";
+import { useCallback } from "react";
+import { ScenarioFlowCard, ScenarioTypeCard } from ".";
 
 const scenarioTypes = [
   {
     label: "Website",
     value: ScenarioType.WEB,
-    icon: getScenarioIconByType({ type: ScenarioType.WEB }),
+    icon: getScenarioIconByType({ type: ScenarioType.WEB, size: "medium" }),
   },
   {
     label: "API",
     value: ScenarioType.API,
-    icon: getScenarioIconByType({ type: ScenarioType.API }),
+    icon: getScenarioIconByType({ type: ScenarioType.API, size: "medium" }),
   },
   // {
   //   label: "Database",
@@ -111,7 +112,7 @@ export const GroupInput = () => {
       initialValue={""}
     >
       <Select placeholder="Select Group" loading={isLoading} allowClear>
-        <Select.Option value="">No Group</Select.Option>
+        <Select.Option value={null}>No Group</Select.Option>
         {data?.scenarioGroups?.map((group) => (
           <Select.Option key={group.id} value={group.id}>
             {group.name}
@@ -126,12 +127,15 @@ export const ScenarioTypeInput = () => {
   const { form } = useScenarioFormContext();
   const type = Form.useWatch("type", form);
 
-  const onClick = async (value: ScenarioType) => {
-    form.setFieldsValue({ type: value });
-    if (value === ScenarioType.USER_FLOW) {
-      form.setFieldsValue({ flowType: ScenarioFlowType.MULTI });
-    }
-  };
+  const onClick = useCallback(
+    async (value: ScenarioType) => {
+      form.setFieldsValue({ type: value });
+      if (value === ScenarioType.USER_FLOW) {
+        form.setFieldsValue({ flowType: ScenarioFlowType.MULTI });
+      }
+    },
+    [form],
+  );
 
   return (
     <Form.Item
