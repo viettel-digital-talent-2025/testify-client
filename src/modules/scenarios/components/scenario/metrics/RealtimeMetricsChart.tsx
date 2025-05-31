@@ -10,6 +10,7 @@ import { colors } from "@/shared/constants/colors";
 import { useAppDispatch, useAppSelector } from "@/shared/hooks";
 import { Card, Col, Progress, Row, Select, Spin, Tag } from "antd";
 import Text from "antd/es/typography/Text";
+import AntTitle from "antd/es/typography/Title";
 import {
   CategoryScale,
   Chart as ChartJS,
@@ -22,7 +23,8 @@ import {
   TooltipItem,
 } from "chart.js";
 import dayjs from "dayjs";
-import { useCallback, useMemo } from "react";
+import Link from "next/link";
+import { useCallback, useEffect, useMemo } from "react";
 import { Line } from "react-chartjs-2";
 import { ChartItem, createChartData, createChartOptions } from "../utils";
 
@@ -41,7 +43,9 @@ export function RealtimeMetricsChart({
   flowId,
   stepId,
   runHistoryId,
+  title,
   showFilter = false,
+  showViewDetails = false,
   showScenarioName = false,
   showLastUpdated = true,
   showProgress = true,
@@ -50,6 +54,8 @@ export function RealtimeMetricsChart({
   flowId?: string;
   stepId?: string;
   runHistoryId?: string;
+  title?: string;
+  showViewDetails?: boolean;
   showFilter?: boolean;
   showScenarioName?: boolean;
   showLastUpdated?: boolean;
@@ -91,78 +97,88 @@ export function RealtimeMetricsChart({
   }
 
   return (
-    <Card
-      title={
+    <Card>
+      <div className="flex flex-col gap-2">
         <div className="flex items-center justify-between">
           <div className="flex items-center justify-between">
-            <div>
-              Realtime Metrics{" "}
-              {showScenarioName ? `- ${metrics?.scenarioName}` : ""}
-            </div>
-            {isRunning && <Tag color="processing">Live</Tag>}
+            <AntTitle level={4} style={{ marginBottom: 0 }}>
+              {title ? title : "Realtime Metrics"}
+              {showScenarioName &&
+                metrics?.scenarioName &&
+                `- ${metrics?.scenarioName}`}
+            </AntTitle>
+            {isRunning && (
+              <Tag color="processing" style={{ marginLeft: 8 }}>
+                Live
+              </Tag>
+            )}
           </div>
           {showFilter && <RealtimeMetricsFilter />}
+          {showViewDetails && (
+            <Link href={`/scenarios/${id}`}>View Details</Link>
+          )}
         </div>
-      }
-    >
-      <Row gutter={[16, 16]}>
-        <Col span={24}>
-          {showLastUpdated && (
-            <div className="flex items-center justify-between">
-              <Text type="secondary">
-                Last updated:{" "}
-                {dayjs(metrics?.lastUpdated).format("YYYY-MM-DD HH:mm:ss")}
-              </Text>
-              <div className="flex gap-2">
-                <Text type="secondary">
-                  Run at: {dayjs(metrics?.runAt).format("YYYY-MM-DD HH:mm:ss")}{" "}
-                  -
-                </Text>
-                <Text type="secondary">
-                  End at:{" "}
-                  {metrics?.endAt
-                    ? dayjs(metrics?.endAt).format("YYYY-MM-DD HH:mm:ss")
-                    : "N/A"}
-                </Text>
-              </div>
-            </div>
+        <Row gutter={[16, 16]}>
+          {(showLastUpdated || showProgress) && (
+            <Col span={24}>
+              {showLastUpdated && (
+                <div className="flex items-center justify-between">
+                  <Text type="secondary">
+                    Last updated:{" "}
+                    {dayjs(metrics?.lastUpdated).format("YYYY-MM-DD HH:mm:ss")}
+                  </Text>
+                  <div className="flex gap-2">
+                    <Text type="secondary">
+                      Run at:{" "}
+                      {dayjs(metrics?.runAt).format("YYYY-MM-DD HH:mm:ss")} -
+                    </Text>
+                    <Text type="secondary">
+                      End at:{" "}
+                      {metrics?.endAt
+                        ? dayjs(metrics?.endAt).format("YYYY-MM-DD HH:mm:ss")
+                        : "N/A"}
+                    </Text>
+                  </div>
+                </div>
+              )}
+              {showProgress && (
+                <Progress
+                  size="small"
+                  percent={metrics?.progress ?? 0}
+                  status={metrics?.progress === 100 ? "success" : "active"}
+                />
+              )}
+            </Col>
           )}
-          {showProgress && (
-            <Progress
-              size="small"
-              percent={metrics?.progress ?? 0}
-              status={metrics?.progress === 100 ? "success" : "active"}
+          <Col xs={24} md={8}>
+            <LineMetricsCard
+              data={metrics?.metrics?.latency ?? []}
+              label="Latency (ms)"
+              color={colors.blue}
+              valueKey="avg"
+              unit="ms"
             />
-          )}
-        </Col>
-        <Col xs={24} md={8}>
-          <LineMetricsCard
-            data={metrics?.metrics?.latency ?? []}
-            label="Latency (ms)"
-            color={colors.blue}
-            valueKey="avg"
-            unit="ms"
-          />
-        </Col>
-        <Col xs={24} md={8}>
-          <LineMetricsCard
-            data={metrics?.metrics?.throughput ?? []}
-            label="Throughput (req/s)"
-            color={colors.green}
-            valueKey="value"
-            unit="req/s"
-          />
-        </Col>
-        <Col xs={24} md={8}>
-          <LineMetricsCard
-            data={metrics?.metrics?.errorRate ?? []}
-            label="Error Rate (%)"
-            color={colors.error}
-            valueKey="value"
-            unit="%"
-          />
-        </Col>
-      </Row>
+          </Col>
+          <Col xs={24} md={8}>
+            <LineMetricsCard
+              data={metrics?.metrics?.throughput ?? []}
+              label="Throughput (req/s)"
+              color={colors.green}
+              valueKey="value"
+              unit="req/s"
+            />
+          </Col>
+          <Col xs={24} md={8}>
+            <LineMetricsCard
+              data={metrics?.metrics?.errorRate ?? []}
+              label="Error Rate (%)"
+              color={colors.error}
+              valueKey="value"
+              unit="%"
+            />
+          </Col>
+        </Row>
+      </div>
     </Card>
   );
 }
@@ -171,6 +187,10 @@ function RealtimeMetricsFilter() {
   const dispatch = useAppDispatch();
   const scenario = useAppSelector(selectSelectedScenario);
   const selectedSteps = useAppSelector(selectSelectedSteps);
+
+  useEffect(() => {
+    dispatch(setSelectedSteps([]));
+  }, [dispatch, scenario]);
 
   const options = useMemo(() => {
     const allSteps =

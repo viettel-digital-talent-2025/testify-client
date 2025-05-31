@@ -10,6 +10,7 @@ export default function MetricsCard() {
       id={runHistory?.scenarioId}
       runHistoryId={runHistory?.runHistoryId}
       showScenarioName={true}
+      showViewDetails={true}
     />
   );
 }

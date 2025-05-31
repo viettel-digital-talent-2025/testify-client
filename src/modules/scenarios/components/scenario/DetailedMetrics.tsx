@@ -5,8 +5,7 @@ import {
   selectSelectedSteps,
 } from "@/scenarios/slices/scenariosSlice";
 import { useAppSelector } from "@/shared/hooks";
-import { Card, Space } from "antd";
-import Title from "antd/es/typography/Title";
+import { Space } from "antd";
 
 export default function DetailedMetrics() {
   const id = useAppSelector(selectSelectedScenarioId);
@@ -15,25 +14,20 @@ export default function DetailedMetrics() {
   return (
     <>
       {selectedSteps.length > 0 && (
-        <Card>
-          <Space direction="vertical" size="large" style={{ width: "100%" }}>
-            {selectedSteps.map((step) => (
-              <div key={`${step.flowId}-${step.stepId}`}>
-                <Title level={4} style={{ marginBottom: 8 }}>
-                  {step.flowName}
-                  {step.stepName && ` - ${step.stepName}`}
-                </Title>
-                <RealtimeMetricsChart
-                  id={id}
-                  flowId={step.flowId}
-                  stepId={step.stepId}
-                  showLastUpdated={false}
-                  showProgress={false}
-                />
-              </div>
-            ))}
-          </Space>
-        </Card>
+        <Space direction="vertical" size="large" style={{ width: "100%" }}>
+          {selectedSteps.map((step) => (
+            <div key={`${step.flowId}-${step.stepId}`}>
+              <RealtimeMetricsChart
+                id={id}
+                flowId={step.flowId}
+                stepId={step.stepId}
+                title={`${step.flowName} - ${step.stepName}`}
+                showLastUpdated={false}
+                showProgress={false}
+              />
+            </div>
+          ))}
+        </Space>
       )}
     </>
   );
