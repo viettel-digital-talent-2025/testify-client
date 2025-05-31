@@ -4,6 +4,7 @@ import {
   WebConfigFormProps,
   ApiConfigFormProps,
 } from "./config";
+import { RunHistory } from "./runHistory";
 
 export enum ScenarioType {
   WEB = "WEB",
@@ -29,7 +30,7 @@ export interface ScenarioStep {
   flowId: string;
   name: string;
   description: string;
-  type: string;
+  type: ScenarioFlowStepType;
   config: WebConfig | ApiConfig;
   order: number;
 }
@@ -56,10 +57,10 @@ export interface Scenario {
   flowType: ScenarioFlowType;
   vus: number;
   duration: number;
-  lastRun: string | null;
   createdAt: string;
   updatedAt: string;
   flows: ScenarioFlow[];
+  runHistories: RunHistory[];
 }
 
 //=========== Scenario Form Types ============
@@ -76,6 +77,7 @@ export interface CreateScenarioStep {
   description: string;
   type: ScenarioFlowStepType;
   config: WebConfig | ApiConfig;
+  order: number;
 }
 
 export interface CreateScenarioFlow {
@@ -83,6 +85,7 @@ export interface CreateScenarioFlow {
   description: string;
   weight: number;
   steps: CreateScenarioStep[];
+  order: number;
 }
 
 export interface CreateScenarioRequest {

@@ -18,12 +18,16 @@ export interface GetScenarioGroupResponse {
 }
 
 //=========== Create Scenario Group Types ============
-export interface CreateScenarioGroup {
+export interface CreateScenarioGroupRequest {
   name: string;
   description: string | null;
 }
 
+export interface CreateScenarioGroupResponse {
+  scenarioGroup: ScenarioGroup;
+}
+
 //=========== Update Scenario Group Types ============
-export interface UpdateScenarioGroup extends CreateScenarioGroup {
+export interface UpdateScenarioGroup extends CreateScenarioGroupRequest {
   id: string;
 }
