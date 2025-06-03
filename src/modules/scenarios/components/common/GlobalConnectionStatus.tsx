@@ -6,6 +6,7 @@ import { useAppDispatch, useAppSelector } from "@/shared/hooks";
 import { useEffect } from "react";
 
 interface ScenarioStatusUpdate {
+  userId: string;
   scenarioId: string;
   runHistoryId: string;
   status: RunHistoryStatus;

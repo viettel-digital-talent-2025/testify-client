@@ -11,13 +11,13 @@ export const metricsApi = appApi.injectEndpoints({
       RealtimeMetricsResponse,
       RealtimeMetricsQueryParams
     >({
-      query: ({ scenarioId, duration, flowId, stepId, runHistoryId }) => ({
+      query: ({ scenarioId, runHistoryId, flowId, stepId, ...rest }) => ({
         url: `api/v1/metrics/${scenarioId}/${runHistoryId}`,
         method: "GET",
         params: {
-          duration,
           flow_id: flowId,
           step_id: stepId,
+          ...rest,
         },
       }),
     }),

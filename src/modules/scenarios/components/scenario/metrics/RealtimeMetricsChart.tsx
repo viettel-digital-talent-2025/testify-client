@@ -68,10 +68,11 @@ export function RealtimeMetricsChart({
   const { data: metrics, isLoading } = useGetMetricsQuery(
     {
       scenarioId: id as string,
-      duration: "300",
+      runHistoryId,
       flowId,
       stepId,
-      runHistoryId,
+      duration: "300",
+      interval: "5s",
     },
     {
       skip: !id,
