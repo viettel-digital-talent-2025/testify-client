@@ -4,7 +4,7 @@ import { Card, Form } from "antd";
 import Title from "antd/es/typography/Title";
 import { useEffect } from "react";
 import { FlowStepsInput } from "./multi/FlowInput";
-
+import StepModal from "./multi/StepModal";
 export default function ScenarioSimpleCard() {
   const { form, strategy, isEditing } = useScenarioFormContext();
   const type = Form.useWatch("type", form);
@@ -40,6 +40,8 @@ export default function ScenarioSimpleCard() {
           return <FlowContent key={fields[0]?.key} flowName={0} />;
         }}
       </Form.List>
+
+      <StepModal />
     </Card>
   );
 }

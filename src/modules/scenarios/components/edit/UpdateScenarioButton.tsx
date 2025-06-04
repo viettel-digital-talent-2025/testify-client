@@ -51,7 +51,7 @@ export default function UpdateScenarioButton({ id }: { id: string }) {
       type,
       flowType,
       vus,
-      groupId,
+      groupId: groupId === "null" ? null : groupId,
       duration: durationInSeconds,
       flows: formattedFlows,
     };

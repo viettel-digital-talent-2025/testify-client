@@ -1,7 +1,9 @@
 import LoadTestButton from "@/scenarios/components/common/LoadTestButton";
 import { ClockCircleOutlined } from "@ant-design/icons";
-import { Space } from "antd";
+import { Space, Tooltip } from "antd";
 import Text from "antd/es/typography/Text";
+import { formatDistanceToNow } from "date-fns";
+import dayjs from "dayjs";
 
 interface ScenarioCardFooterProps {
   scenarioId: string;
@@ -18,7 +20,12 @@ export default function ScenarioCardFooter({
     <div className="flex items-center justify-between">
       <Space>
         <ClockCircleOutlined />
-        <Text type="secondary">Last run: {formatDate(lastRun)}</Text>
+        <Tooltip title={dayjs(lastRun).format("YYYY-MM-DD HH:mm:ss")}>
+          <Text type="secondary">
+            Last run:{" "}
+            {lastRun ? formatDistanceToNow(new Date(lastRun)) : "Never"}
+          </Text>
+        </Tooltip>
       </Space>
       {showLoadTestButton && (
         <Space>
@@ -28,12 +35,3 @@ export default function ScenarioCardFooter({
     </div>
   );
 }
-
-const formatDate = (date: string | null) => {
-  if (!date) return "Never";
-  return new Date(date).toLocaleDateString("vn", {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  });
-};

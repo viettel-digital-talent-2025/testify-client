@@ -109,10 +109,10 @@ export const GroupInput = () => {
       name="groupId"
       label="Group"
       extra="Organize scenarios by group"
-      initialValue={""}
+      initialValue={"null"}
     >
       <Select placeholder="Select Group" loading={isLoading} allowClear>
-        <Select.Option value={null}>No Group</Select.Option>
+        <Select.Option value={"null"}>No Group</Select.Option>
         {data?.scenarioGroups?.map((group) => (
           <Select.Option key={group.id} value={group.id}>
             {group.name}

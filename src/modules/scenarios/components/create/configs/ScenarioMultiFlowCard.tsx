@@ -49,6 +49,8 @@ export default function ScenarioMultiFlowCard() {
     [],
   );
 
+  console.log("activeFlow", activeFlow);
+
   return (
     <Card>
       <Title level={4}>Multi-Flow Scenario Configuration</Title>
@@ -60,7 +62,7 @@ export default function ScenarioMultiFlowCard() {
           const items = fields.map(({ key, name }) => {
             const flow = flows?.[name];
             return {
-              key: key.toString(),
+              key: name.toString(),
               label: (
                 <Space>
                   <Paragraph ellipsis style={{ marginBottom: 0 }}>
@@ -77,6 +79,7 @@ export default function ScenarioMultiFlowCard() {
             e: React.MouseEvent | React.KeyboardEvent | string,
             action: "add" | "remove",
           ) => {
+            console.log(fields);
             if (action === "add") {
               const currentFlows = [...form.getFieldValue("flows")];
               const newFlow = strategy.createSimpleFlow(
@@ -84,25 +87,34 @@ export default function ScenarioMultiFlowCard() {
                 currentFlows.length,
               )[0];
               const updatedFlows = [...currentFlows, newFlow];
-
               const redistributed = redistributeWeights(updatedFlows);
               form.setFieldsValue({ flows: redistributed });
-              setActiveFlow((updatedFlows.length - 1).toString());
+              setActiveFlow(() =>
+                (Number(fields[fields.length - 1]?.name) + 1).toString(),
+              );
+              return;
             }
 
             if (action === "remove" && typeof e === "string") {
               if (fields.length === 1) {
-                const updatedFlows = form.getFieldValue("flows");
-                updatedFlows[0].weight = 100;
-                form.setFieldsValue({ flows: updatedFlows });
                 return;
               }
-              const index = fields.findIndex((f) => f.key.toString() === e);
-              if (index !== -1) {
-                remove(index);
-                const remaining = fields.filter((_, i) => i !== index);
-                setActiveFlow(remaining[0]?.key?.toString() || "0");
+
+              const index = fields.findIndex((f) => f.name.toString() === e);
+              const updatedIndex = index === 0 ? 1 : index - 1;
+              if (fields.length === 2) {
+                const updatedFlows = form.getFieldValue("flows");
+                updatedFlows[updatedIndex].weight = 100;
+                form.setFieldsValue({ flows: updatedFlows });
+              } else {
+                const updatedFlows = form.getFieldValue("flows");
+                updatedFlows[updatedIndex].weight += updatedFlows[index].weight;
+                form.setFieldsValue({ flows: updatedFlows });
               }
+
+              remove(index);
+              const newActive = fields.filter((f) => f.name === updatedIndex);
+              setActiveFlow(() => newActive[0]?.name?.toString() || "0");
             }
           };
 
@@ -111,7 +123,7 @@ export default function ScenarioMultiFlowCard() {
               size="small"
               type="editable-card"
               activeKey={active}
-              onChange={(key) => setActiveFlow(key)}
+              onChange={(key) => setActiveFlow(() => key)}
               onEdit={handleEdit}
               items={items}
             />

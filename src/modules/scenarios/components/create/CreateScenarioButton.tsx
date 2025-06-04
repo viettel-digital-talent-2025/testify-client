@@ -36,7 +36,7 @@ export default function CreateScenarioButton() {
       type,
       flowType,
       vus,
-      groupId,
+      groupId: groupId === "null" ? null : groupId,
       duration: durationInSeconds,
       flows: formattedFlows,
     };

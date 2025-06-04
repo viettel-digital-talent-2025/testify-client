@@ -18,11 +18,14 @@ export default function ScenarioCardHeader(props: ScenarioCardHeaderProps) {
       <div className="flex items-center justify-between gap-2">
         <div className="flex items-center gap-2">
           {getScenarioIconByType({ type, size: "medium" })}
-          <Title level={4} style={{ margin: 0 }} ellipsis>
+          <Title level={5} style={{ margin: 0 }} ellipsis>
             {name}
           </Title>
         </div>
-        <Tag color={flowType === ScenarioFlowType.MULTI ? "purple" : "cyan"}>
+        <Tag
+          color={flowType === ScenarioFlowType.MULTI ? "purple" : "cyan"}
+          style={{ marginRight: 0 }}
+        >
           {flowType}
         </Tag>
       </div>
