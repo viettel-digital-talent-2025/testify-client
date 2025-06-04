@@ -75,7 +75,8 @@ export const scenarioApi = appApi.injectEndpoints({
         method: "PATCH",
         body: body,
       }),
-      invalidatesTags: () => [
+      invalidatesTags: (result) => [
+        { type: "Scenario", id: result?.id },
         { type: "Scenario", id: "LIST" },
         { type: "ScenarioGroup", id: "LIST" },
       ],

@@ -21,7 +21,7 @@ export default function DetailedMetrics() {
                 id={id}
                 flowId={step.flowId}
                 stepId={step.stepId}
-                title={`${step.flowName} - ${step.stepName}`}
+                title={`${step.flowName} ${step.stepName ? `- ${step.stepName}` : ""}`}
                 showLastUpdated={false}
                 showProgress={false}
               />

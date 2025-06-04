@@ -1,4 +1,5 @@
 "use client";
+import { bottlenecksApi } from "@/bottlenecks/apis/bottlenecksApi";
 import { runHistoriesApi } from "@/scenarios/apis/runHistoryApi";
 import { setScenarioRunningStatus } from "@/scenarios/slices/metricsSlice";
 import { RunHistoryStatus } from "@/scenarios/types/runHistory";
@@ -39,6 +40,7 @@ export default function GlobalConnectionStatus() {
               { type: "RunHistory", id: "LIST" },
             ]),
           );
+          dispatch(bottlenecksApi.util.invalidateTags(["Bottlenecks"]));
         }
       } catch {}
     };

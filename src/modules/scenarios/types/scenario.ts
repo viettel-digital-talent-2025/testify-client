@@ -1,3 +1,4 @@
+import { Bottleneck } from "@/bottlenecks/types/bottleneck";
 import {
   WebConfig,
   ApiConfig,
@@ -33,6 +34,7 @@ export interface ScenarioStep {
   type: ScenarioFlowStepType;
   config: WebConfig | ApiConfig;
   order: number;
+  bottlenecks: Bottleneck[];
 }
 
 export interface ScenarioFlow {

@@ -1,4 +1,5 @@
 "use client";
+import { Bottleneck } from "@/bottlenecks/types/bottleneck";
 import { useGetMetricsQuery } from "@/scenarios/apis/metricsApi";
 import { selectIsScenarioRunning } from "@/scenarios/slices/metricsSlice";
 import {
@@ -14,19 +15,25 @@ import AntTitle from "antd/es/typography/Title";
 import {
   CategoryScale,
   Chart as ChartJS,
+  Tooltip as ChartTooltip,
   Legend,
   LinearScale,
   LineElement,
   PointElement,
   Title,
-  Tooltip,
   TooltipItem,
 } from "chart.js";
+import annotationPlugin from "chartjs-plugin-annotation";
 import dayjs from "dayjs";
 import Link from "next/link";
 import { useCallback, useEffect, useMemo } from "react";
 import { Line } from "react-chartjs-2";
-import { ChartItem, createChartData, createChartOptions } from "../utils";
+import {
+  ChartItem,
+  createChartData,
+  createChartOptions,
+  formatTime,
+} from "../utils";
 
 ChartJS.register(
   CategoryScale,
@@ -34,8 +41,9 @@ ChartJS.register(
   PointElement,
   LineElement,
   Title,
-  Tooltip,
+  ChartTooltip,
   Legend,
+  annotationPlugin,
 );
 
 export function RealtimeMetricsChart({
@@ -49,6 +57,8 @@ export function RealtimeMetricsChart({
   showScenarioName = false,
   showLastUpdated = true,
   showProgress = true,
+  bottlenecks,
+  style,
 }: {
   id?: string | null;
   flowId?: string;
@@ -60,6 +70,8 @@ export function RealtimeMetricsChart({
   showScenarioName?: boolean;
   showLastUpdated?: boolean;
   showProgress?: boolean;
+  bottlenecks?: Bottleneck[];
+  style?: React.CSSProperties;
 }) {
   const isRunning = useAppSelector((state) =>
     selectIsScenarioRunning(state, id as string),
@@ -98,7 +110,7 @@ export function RealtimeMetricsChart({
   }
 
   return (
-    <Card>
+    <Card style={style}>
       <div className="flex flex-col gap-2">
         <div className="flex items-center justify-between">
           <div className="flex items-center justify-between">
@@ -106,7 +118,7 @@ export function RealtimeMetricsChart({
               {title ? title : "Realtime Metrics"}
               {showScenarioName &&
                 metrics?.scenarioName &&
-                `- ${metrics?.scenarioName}`}
+                ` - ${metrics?.scenarioName}`}
             </AntTitle>
             {isRunning && (
               <Tag color="processing" style={{ marginLeft: 8 }}>
@@ -158,6 +170,8 @@ export function RealtimeMetricsChart({
               color={colors.blue}
               valueKey="avg"
               unit="ms"
+              bottlenecks={bottlenecks}
+              metricType="latency"
             />
           </Col>
           <Col xs={24} md={8}>
@@ -167,6 +181,8 @@ export function RealtimeMetricsChart({
               color={colors.green}
               valueKey="value"
               unit="req/s"
+              bottlenecks={bottlenecks}
+              metricType="throughput"
             />
           </Col>
           <Col xs={24} md={8}>
@@ -176,6 +192,8 @@ export function RealtimeMetricsChart({
               color={colors.error}
               valueKey="value"
               unit="%"
+              bottlenecks={bottlenecks}
+              metricType="errorRate"
             />
           </Col>
         </Row>
@@ -197,24 +215,28 @@ function RealtimeMetricsFilter() {
     const allSteps =
       scenario?.flows
         .map((flow) => {
-          return [
-            {
-              label: `${flow.name} - All Steps`,
-              value: `${flow.id}:`,
-              flowId: flow.id,
-              stepId: null,
-              flowName: flow.name,
-              stepName: null,
-            },
-            ...flow.steps.map((step) => ({
-              label: `${flow.name} - ${step.name}`,
-              value: `${flow.id}:${step.id}`,
-              flowId: flow.id,
-              stepId: step.id,
-              flowName: flow.name,
-              stepName: step.name,
-            })),
-          ];
+          const stepOptions = flow.steps.map((step) => ({
+            label: `${flow.name} - ${step.name}`,
+            value: `${flow.id}:${step.id}`,
+            flowId: flow.id,
+            stepId: step.id,
+            flowName: flow.name,
+            stepName: step.name,
+          }));
+
+          return flow.steps.length > 1
+            ? [
+                {
+                  label: `${flow.name}`,
+                  value: `${flow.id}:`,
+                  flowId: flow.id,
+                  stepId: "",
+                  flowName: flow.name,
+                  stepName: "",
+                },
+                ...stepOptions,
+              ]
+            : stepOptions;
         })
         .flat() || [];
 
@@ -238,6 +260,9 @@ function RealtimeMetricsFilter() {
     [dispatch, options],
   );
 
+  const isSingleStep =
+    scenario?.flows?.length === 1 && scenario?.flows[0].steps.length === 1;
+
   return (
     <div className="flex items-center justify-between gap-4">
       <Select
@@ -246,9 +271,13 @@ function RealtimeMetricsFilter() {
         placeholder="Select steps to compare metrics"
         onChange={handleStepSelect}
         options={options}
-        value={selectedSteps.map((step) => `${step.flowId}:${step.stepId}`)}
+        value={
+          isSingleStep
+            ? [`${scenario?.flows[0].id}:${scenario?.flows[0].steps[0].id}`]
+            : selectedSteps.map((step) => `${step.flowId}:${step.stepId}`)
+        }
         maxTagCount={1}
-        disabled={!scenario?.flows.length}
+        disabled={!scenario?.flows.length || isSingleStep}
         style={{ width: "300px" }}
       />
     </div>
@@ -261,6 +290,25 @@ interface LineMetricsCardProps {
   unit: string;
   color: string;
   valueKey: "value" | "avg" | "p95";
+  bottlenecks?: Bottleneck[];
+  metricType: "latency" | "throughput" | "errorRate";
+}
+
+// Define annotation types
+interface PointAnnotationOptions {
+  type: "point";
+  xValue: string;
+  yValue: number;
+  backgroundColor: string;
+  borderColor: string;
+  borderWidth: number;
+  radius: number;
+  pointStyle: "star";
+  label?: {
+    enabled: boolean;
+    content: string;
+    position: "top";
+  };
 }
 
 function LineMetricsCard({
@@ -269,9 +317,39 @@ function LineMetricsCard({
   unit,
   color,
   valueKey,
+  bottlenecks,
 }: LineMetricsCardProps) {
+  // Create a map of bottlenecks by timestamp for exact matching
+  const bottlenecksByTimestamp = useMemo(() => {
+    const map = new Map<string, Bottleneck>();
+    bottlenecks?.forEach((bottleneck) => {
+      // Convert Date to string timestamp for consistent formatting
+      const timestamp = formatTime(bottleneck.timestamp.toString());
+      map.set(timestamp, bottleneck);
+    });
+    return map;
+  }, [bottlenecks]);
+
   const options = useMemo(() => {
     const baseOptions = createChartOptions(label);
+    const bottleneckPoints: PointAnnotationOptions[] = data
+      .filter((d) => bottlenecksByTimestamp.has(formatTime(d.timestamp)))
+      .map((d) => ({
+        type: "point" as const,
+        xValue: formatTime(d.timestamp),
+        yValue: d[valueKey] ?? 0,
+        backgroundColor: colors.error,
+        borderColor: colors.error,
+        borderWidth: 2,
+        radius: 6,
+        pointStyle: "star",
+        label: {
+          enabled: true,
+          content: "Bottleneck",
+          position: "top",
+        },
+      }));
+
     return {
       ...baseOptions,
       plugins: {
@@ -280,16 +358,39 @@ function LineMetricsCard({
           ...createChartOptions(label).plugins?.tooltip,
           callbacks: {
             title: (items: { dataIndex: number; label: string }[]) => {
-              return items[0].label;
+              const timestamp = items[0].label;
+              const bottleneck = bottlenecksByTimestamp.get(timestamp);
+
+              if (bottleneck) {
+                return `${timestamp} (Bottleneck Detected)`;
+              }
+              return timestamp;
             },
             label: (item: TooltipItem<"line">) => {
-              return `${item.dataset.label}: ${(item.raw as number).toFixed(2)} ${unit}`;
+              const timestamp = formatTime(data[item.dataIndex].timestamp);
+              const bottleneck = bottlenecksByTimestamp.get(timestamp);
+
+              const value = (item.raw as number).toFixed(5);
+              if (bottleneck) {
+                const lines = [
+                  `${item.dataset.label}: ${value} ${unit}`,
+                  `Severity: ${bottleneck.severity}`,
+                ];
+                if (bottleneck.analysis) {
+                  lines.push(`Analysis: ${bottleneck.analysis}`);
+                }
+                return lines;
+              }
+              return `${item.dataset.label}: ${value} ${unit}`;
             },
           },
         },
+        annotation: {
+          annotations: bottleneckPoints,
+        },
       },
     };
-  }, [label, unit]);
+  }, [label, unit, bottlenecksByTimestamp, data, valueKey]);
 
   return (
     <Card size="small" title={label}>

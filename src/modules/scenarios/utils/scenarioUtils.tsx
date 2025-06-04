@@ -2,11 +2,15 @@ import { ScenarioFlowStepType, ScenarioType } from "@/scenarios/types/scenario";
 import {
   ApartmentOutlined,
   ApiOutlined,
+  BarChartOutlined,
   BranchesOutlined,
+  CheckOutlined,
   ClockCircleOutlined,
+  CloseCircleOutlined,
   DatabaseOutlined,
   GlobalOutlined,
   OrderedListOutlined,
+  ThunderboltOutlined,
   UserOutlined,
 } from "@ant-design/icons";
 
@@ -84,7 +88,15 @@ export function getScenarioColorByType(type: ScenarioType) {
 }
 
 export function getScenarioStatsIcon(
-  stats: "flows" | "steps" | "vus" | "duration",
+  stats:
+    | "flows"
+    | "steps"
+    | "vus"
+    | "duration"
+    | "avgResponseTime"
+    | "successRate"
+    | "errorRate"
+    | "requestsPerSecond",
 ) {
   switch (stats) {
     case "flows":
@@ -95,5 +107,13 @@ export function getScenarioStatsIcon(
       return <UserOutlined />;
     case "duration":
       return <ClockCircleOutlined />;
+    case "avgResponseTime":
+      return <ThunderboltOutlined />;
+    case "successRate":
+      return <CheckOutlined />;
+    case "errorRate":
+      return <CloseCircleOutlined />;
+    case "requestsPerSecond":
+      return <BarChartOutlined />;
   }
 }

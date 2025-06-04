@@ -20,37 +20,28 @@ export interface Metrics {
 export interface RealtimeMetricsQueryParams {
   scenarioId: string;
   runHistoryId?: string;
-  duration?: string;
   flowId?: string;
   stepId?: string;
+  duration?: string;
+  interval?: string;
+  runAt?: string;
+  endAt?: string;
 }
 
 export interface RealtimeMetrics {
   latency: {
     timestamp: number;
-    value: number;
-    flowId?: string;
-    stepId?: string;
-    flowName?: string;
-    stepName?: string;
+    avg: number;
+    p95: number;
   }[];
   throughput: {
     timestamp: number;
     value: number;
-    flowId?: string;
-    stepId?: string;
-    flowName?: string;
-    stepName?: string;
   }[];
   errorRate: {
     timestamp: number;
     value: number;
-    flowId?: string;
-    stepId?: string;
-    flowName?: string;
-    stepName?: string;
   }[];
-  lastUpdated: string;
 }
 
 export interface RealtimeMetricsResponse {
