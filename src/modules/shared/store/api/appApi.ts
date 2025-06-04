@@ -1,15 +1,15 @@
 "use client";
+import { setAccessToken, setLogout } from "@/auth/slices/authSlide";
+import { RefreshTokenResponse } from "@/auth/types/auth";
+import { RootState } from "@/shared/store/store";
 import {
+  BaseQueryApi,
   BaseQueryFn,
   createApi,
   FetchArgs,
   fetchBaseQuery,
   FetchBaseQueryError,
-  BaseQueryApi,
 } from "@reduxjs/toolkit/query/react";
-import { RootState } from "@/shared/store/store";
-import { setAccessToken, setLogout } from "@/auth/slices/authSlide";
-import { RefreshTokenResponse } from "@/auth/types/auth";
 
 const baseQuery = fetchBaseQuery({
   baseUrl: process.env.NEXT_PUBLIC_BACKEND_URL,
@@ -88,5 +88,6 @@ export const appApi = createApi({
     "RunHistory",
     "RealtimeMetrics",
     "Schedule",
+    "Bottlenecks",
   ],
 });
