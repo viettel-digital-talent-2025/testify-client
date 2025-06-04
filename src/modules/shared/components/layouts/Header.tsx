@@ -1,27 +1,27 @@
 "use client";
-import { Dropdown, Menu, MenuProps, Avatar, Button, Space } from "antd";
-import { usePathname, useRouter } from "next/navigation";
-import { Header as AntHeader } from "antd/es/layout/layout";
+import { useLogoutMutation } from "@/auth/apis/authApi";
+import { selectUser } from "@/auth/slices/authSlide";
 import { colors } from "@/shared/constants/colors";
-import Title from "antd/es/typography/Title";
-import Link from "next/link";
+import { useAppSelector } from "@/shared/hooks";
 import {
+  AppstoreOutlined,
+  BugOutlined,
+  CheckCircleOutlined,
   DashboardOutlined,
   ExperimentOutlined,
-  ScheduleOutlined,
-  // BugOutlined,
-  UserOutlined,
-  LogoutOutlined,
   HomeOutlined,
-  AppstoreOutlined,
-  RocketOutlined,
-  CheckCircleOutlined,
   LoginOutlined,
+  LogoutOutlined,
+  RocketOutlined,
+  ScheduleOutlined,
+  UserOutlined,
 } from "@ant-design/icons";
-import { useAppSelector } from "@/shared/hooks";
-import { selectUser } from "@/auth/slices/authSlide";
-import { useLogoutMutation } from "@/auth/apis/authApi";
+import { Avatar, Button, Dropdown, Menu, MenuProps } from "antd";
+import { Header as AntHeader } from "antd/es/layout/layout";
 import Text from "antd/es/typography/Text";
+import Title from "antd/es/typography/Title";
+import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
 
 const UserItems: MenuProps["items"] = [
   {
@@ -39,11 +39,11 @@ const UserItems: MenuProps["items"] = [
     icon: <ScheduleOutlined />,
     label: <Link href="/schedule">Schedule</Link>,
   },
-  // {
-  //   key: "bottlenecks",
-  //   icon: <BugOutlined />,
-  //   label: <Link href="/bottlenecks">Bottlenecks</Link>,
-  // },
+  {
+    key: "bottlenecks",
+    icon: <BugOutlined />,
+    label: <Link href="/bottlenecks">Bottlenecks</Link>,
+  },
 ];
 
 const GuestItems: MenuProps["items"] = [
@@ -86,7 +86,7 @@ export default function Header() {
         alignItems: "center",
         justifyContent: "space-between",
         backgroundColor: colors.dark,
-        borderBottom: `1px solid #adadad`,
+        borderBottom: `1px solid ${colors.border}`,
         padding: "0 24px",
       }}
     >
@@ -117,7 +117,7 @@ export default function Header() {
 
 const GuestMenu = () => {
   return (
-    <Space style={{ width: "100%", justifyContent: "end" }}>
+    <div className="flex items-center gap-2">
       <Link href="/login">
         <Button type="primary" icon={<LoginOutlined />}>
           Login
@@ -126,7 +126,7 @@ const GuestMenu = () => {
       <Link href="/register">
         <Button icon={<UserOutlined />}>Register</Button>
       </Link>
-    </Space>
+    </div>
   );
 };
 
@@ -152,6 +152,7 @@ const UserMenu = () => {
 
   return (
     <div className="flex items-center gap-2">
+      <Text>Hi, {user?.firstname}</Text>
       <Dropdown
         menu={{ items: dropdownItems, onClick: handleMenuClick }}
         trigger={["click"]}
@@ -166,7 +167,6 @@ const UserMenu = () => {
           {user?.firstname?.[0]?.toUpperCase() || <UserOutlined />}
         </Avatar>
       </Dropdown>
-      <Text>Hi, {user?.firstname}</Text>
     </div>
   );
 };
