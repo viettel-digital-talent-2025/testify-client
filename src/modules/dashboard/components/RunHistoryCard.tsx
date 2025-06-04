@@ -1,22 +1,23 @@
 "use client";
-import { setSelectedRunHistory } from "@/dashboard/slices/dashboardSlice";
+import {
+  selectSelectedRunHistory,
+  setSelectedRunHistory,
+} from "@/dashboard/slices/dashboardSlice";
 import { RunHistory } from "@/scenarios/types/runHistory";
 import {
   getRunHistoryStatusColor,
   getScenarioStatsIcon,
 } from "@/scenarios/utils";
-import { useAppDispatch } from "@/shared/hooks";
-import {
-  CheckOutlined,
-  ClockCircleOutlined,
-  ThunderboltOutlined,
-} from "@ant-design/icons";
-import { Card, Col, Progress, Row, Tag } from "antd";
+import { colors } from "@/shared/constants/colors";
+import { useAppDispatch, useAppSelector } from "@/shared/hooks";
+import { Card, Col, Progress, Row, Tag, Tooltip } from "antd";
 import Text from "antd/es/typography/Text";
+import { formatDistanceToNow } from "date-fns";
 import dayjs from "dayjs";
 
 export default function RunHistoryCard({ history }: { history: RunHistory }) {
   const dispatch = useAppDispatch();
+  const selectedRunHistory = useAppSelector(selectSelectedRunHistory);
   const {
     scenario,
     status,
@@ -28,11 +29,17 @@ export default function RunHistoryCard({ history }: { history: RunHistory }) {
     progress,
   } = history;
 
+  const isSelected = history.id === selectedRunHistory?.runHistoryId;
   return (
     <Card
       hoverable
       size="small"
-      style={{ marginBottom: 12 }}
+      style={{
+        marginBottom: 12,
+        border: isSelected
+          ? `1px solid ${colors.primary}`
+          : `1px solid ${colors.border}`,
+      }}
       onClick={() =>
         dispatch(
           setSelectedRunHistory({
@@ -50,28 +57,29 @@ export default function RunHistoryCard({ history }: { history: RunHistory }) {
               {status}
             </Tag>
           </div>
+          <Tooltip title={dayjs(runAt).format("YYYY-MM-DD HH:mm:ss")}>
+            <Text type="secondary">
+              {formatDistanceToNow(runAt, { addSuffix: true })}
+            </Text>
+          </Tooltip>
         </Col>
         <Col span={24}>
           <div className="flex justify-between gap-2">
-            <Text type="secondary">
-              <ClockCircleOutlined />{" "}
-              {dayjs(runAt).format("DD/MM/YYYY HH:mm:ss")}
+            <Text>
+              {getScenarioStatsIcon("vus")}{" "}
+              <Text type="secondary">{vus} VUs</Text>
             </Text>
             <Text>
-              {getScenarioStatsIcon("vus")} {vus} VUs
+              {getScenarioStatsIcon("duration")}{" "}
+              <Text type="secondary">{duration}s</Text>
             </Text>
             <Text>
-              <ClockCircleOutlined style={{ marginRight: 4 }} />
-              {duration}s
+              {getScenarioStatsIcon("avgResponseTime")}{" "}
+              <Text type="secondary">{avgResponseTime.toFixed(1)}ms</Text>
             </Text>
             <Text>
-              <ThunderboltOutlined style={{ marginRight: 4 }} />
-              {avgResponseTime.toFixed(1)}ms
-            </Text>
-
-            <Text>
-              <CheckOutlined style={{ marginRight: 4 }} />
-              {(successRate * 100).toFixed(1)}%
+              {getScenarioStatsIcon("successRate")}{" "}
+              <Text type="secondary">{(successRate * 100).toFixed(1)}%</Text>
             </Text>
           </div>
         </Col>

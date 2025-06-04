@@ -4,7 +4,7 @@ import { Card, Space } from "antd";
 import Paragraph from "antd/es/typography/Paragraph";
 import Text from "antd/es/typography/Text";
 import Title from "antd/es/typography/Title";
-import dayjs from "dayjs";
+import { formatDistanceToNow } from "date-fns";
 import RunHistoryCard from "./RunHistoryCard";
 
 interface RunHistoryListCardProps {
@@ -24,11 +24,12 @@ export default function RunHistoryListCard(props: RunHistoryListCardProps) {
               {title}
             </Title>
             <Text type="secondary">
-              Last updated: {dayjs().format("YYYY-MM-DD HH:mm:ss")}
+              Last updated: {formatDistanceToNow(new Date())}
             </Text>
           </div>
         </div>
-        {data?.length === 0 ||
+        {!data ||
+          data?.length === 0 ||
           (!data && (
             <Paragraph
               type="secondary"

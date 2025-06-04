@@ -11,6 +11,7 @@ export default function MetricsCard() {
       runHistoryId={runHistory?.runHistoryId}
       showScenarioName={true}
       showViewDetails={true}
+      showProgress={false}
     />
   );
 }
