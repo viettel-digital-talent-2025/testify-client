@@ -79,9 +79,6 @@ export default function ScenarioPage() {
       <Tabs
         items={items}
         defaultActiveKey="overview"
-        onChange={(key) => {
-          console.log(key);
-        }}
         style={{
           height: "100%",
           overflowY: "auto",
