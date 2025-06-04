@@ -3,6 +3,9 @@ import authReducer, { AuthState } from "@/auth/slices/authSlide";
 import recoveryPassReducer, {
   RecoveryPassState,
 } from "@/auth/slices/recoveryPassSlice";
+import bottlenecksReducer, {
+  BottlenecksState,
+} from "@/bottlenecks/slices/bottlenecksSlice";
 import dashboardReducer, {
   DashboardState,
 } from "@/dashboard/slices/dashboardSlice";
@@ -19,6 +22,7 @@ import scenarioGroupsReducer, {
 import scenariosReducer, {
   ScenariosState,
 } from "@/scenarios/slices/scenariosSlice";
+import scheduleReducer, { ScheduleState } from "@/schedule/slices/sheduleSlice";
 import { appApi } from "@/shared/store/api/appApi";
 import {
   Action,
@@ -69,6 +73,8 @@ export type RootState = {
   createScenario: CreateScenarioState;
   metrics: MetricsState;
   runHistories: RunHistoryState;
+  schedule: ScheduleState;
+  bottlenecks: BottlenecksState;
 };
 
 const persistConfig = {
@@ -79,9 +85,13 @@ const persistConfig = {
   blacklist: [
     "recoveryPass",
     "dashboard",
+    "scenarios",
+    "scenarioGroups",
     "createScenario",
     "runHistories",
-    "scenarioGroups",
+    "metrics",
+    "schedule",
+    "bottlenecks",
   ],
 };
 
@@ -95,6 +105,8 @@ const appReducer = combineReducers({
   createScenario: createScenarioReducer,
   metrics: metricsReducer,
   runHistories: runHistoryReducer,
+  schedule: scheduleReducer,
+  bottlenecks: bottlenecksReducer,
 });
 
 const rootReducer: Reducer<RootState, Action> = (state, action) => {
