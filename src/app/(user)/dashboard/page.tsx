@@ -29,7 +29,7 @@ export default function DashboardPage() {
           gutter={[16, 16]}
           style={{ height: "100%", overflowY: "auto", overflowX: "hidden" }}
         >
-          <Col span={8}>
+          <Col span={7}>
             <Row gutter={[16, 16]}>
               <Col span={24}>
                 <RunningScenarios />
@@ -39,7 +39,7 @@ export default function DashboardPage() {
               </Col>
             </Row>
           </Col>
-          <Col span={16}>
+          <Col span={17}>
             <MetricsCard />
           </Col>
         </Row>
