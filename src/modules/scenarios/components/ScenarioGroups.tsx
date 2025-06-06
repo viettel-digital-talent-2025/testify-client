@@ -1,44 +1,44 @@
 "use client";
-import { useCallback, useMemo, useState, memo } from "react";
-import { useRouter } from "next/navigation";
 import {
-  Card,
-  Button,
-  Tree,
-  TreeDataNode,
-  TreeProps,
-  Tooltip,
-  Dropdown,
-  MenuProps,
-} from "antd";
-import {
-  PlusOutlined,
-  GroupOutlined,
-  DownOutlined,
-  DropboxOutlined,
-  MoreOutlined,
-} from "@ant-design/icons";
-import { GroupModal } from "./group";
-import { useAppDispatch, useAppSelector } from "@/shared/hooks/useStore";
+  selectIsDragging,
+  setCurrentEditGroup,
+  setEditGroupOpen,
+  setNewGroupOpen,
+} from "@/scenarios/slices/scenarioGroupsSlice";
 import {
   setSelectedGroupId,
   setSelectedScenarioId,
 } from "@/scenarios/slices/scenariosSlice";
-import { ScenarioGroup } from "../types/scenarioGroup";
-import { EventDataNode } from "antd/es/tree";
-import { getScenarioIconByType } from "../utils";
+import { useAppDispatch, useAppSelector } from "@/shared/hooks/useStore";
 import {
-  selectIsDragging,
-  setNewGroupOpen,
-  setEditGroupOpen,
-  setCurrentEditGroup,
-} from "@/scenarios/slices/scenarioGroupsSlice";
-import { setReverseIsDragging } from "../slices/scenarioGroupsSlice";
+  DownOutlined,
+  DropboxOutlined,
+  GroupOutlined,
+  MoreOutlined,
+  PlusOutlined,
+} from "@ant-design/icons";
+import {
+  Button,
+  Card,
+  Dropdown,
+  MenuProps,
+  Tooltip,
+  Tree,
+  TreeDataNode,
+  TreeProps,
+} from "antd";
+import { EventDataNode } from "antd/es/tree";
+import Title from "antd/es/typography/Title";
+import { useParams, useRouter } from "next/navigation";
+import { memo, useCallback, useEffect, useMemo, useState } from "react";
 import {
   useDeleteScenarioGroupMutation,
   useGetScenarioGroupsQuery,
 } from "../apis/scenarioGroupApi";
-import Title from "antd/es/typography/Title";
+import { setReverseIsDragging } from "../slices/scenarioGroupsSlice";
+import { ScenarioGroup } from "../types/scenarioGroup";
+import { getScenarioIconByType } from "../utils";
+import { GroupModal } from "./group";
 import "./ScenarioGroups.css";
 const { DirectoryTree } = Tree;
 
@@ -77,11 +77,18 @@ ScenarioGroupsHeader.displayName = "ScenarioGroupsHeader";
 const ScenarioGroupsTree = memo(() => {
   const dispatch = useAppDispatch();
   const router = useRouter();
+  const params = useParams();
   const isDragging = useAppSelector(selectIsDragging);
   const [selectedKeys, setSelectedKeys] = useState<string[]>(["null"]);
   const [expandedKeys, setExpandedKeys] = useState<string[]>(["null"]);
   const [deleteGroup] = useDeleteScenarioGroupMutation();
   const { data } = useGetScenarioGroupsQuery();
+
+  useEffect(() => {
+    if (params.id) {
+      setSelectedKeys([params.id as string]);
+    }
+  }, [params.id]);
 
   const onExpand: TreeProps["onExpand"] = useCallback(
     (
