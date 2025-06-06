@@ -4,7 +4,6 @@ import {
   ApiOutlined,
   BarChartOutlined,
   BranchesOutlined,
-  CheckOutlined,
   ClockCircleOutlined,
   CloseCircleOutlined,
   DatabaseOutlined,
@@ -93,10 +92,10 @@ export function getScenarioStatsIcon(
     | "steps"
     | "vus"
     | "duration"
-    | "avgResponseTime"
-    | "successRate"
+    | "avgLatency"
+    | "p95Latency"
     | "errorRate"
-    | "requestsPerSecond",
+    | "throughput",
 ) {
   switch (stats) {
     case "flows":
@@ -107,13 +106,13 @@ export function getScenarioStatsIcon(
       return <UserOutlined />;
     case "duration":
       return <ClockCircleOutlined />;
-    case "avgResponseTime":
+    case "avgLatency":
       return <ThunderboltOutlined />;
-    case "successRate":
-      return <CheckOutlined />;
+    case "p95Latency":
+      return <ThunderboltOutlined />;
     case "errorRate":
       return <CloseCircleOutlined />;
-    case "requestsPerSecond":
+    case "throughput":
       return <BarChartOutlined />;
   }
 }
