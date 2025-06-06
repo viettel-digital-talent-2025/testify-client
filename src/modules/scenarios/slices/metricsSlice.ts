@@ -4,31 +4,46 @@ import { RootState } from "@/shared/store/store";
 import { createSelector, createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 export interface MetricsState {
-  isScenarioRunning: Record<string, boolean>;
-  runHistoryStatus: RunHistoryStatus | null;
+  runningJobs: Record<
+    string,
+    {
+      scenarioId: string;
+      isRunning: boolean;
+    }
+  >;
 }
 
 const initialState: MetricsState = {
-  isScenarioRunning: {},
-  runHistoryStatus: null,
+  runningJobs: {},
 };
 
 const metricsSlice = createSlice({
   name: "metrics",
   initialState: initialState,
   reducers: {
-    setScenarioRunning: (
+    setRunningJob: (
       state,
-      action: PayloadAction<{ scenarioId: string; isRunning: boolean }>,
+      action: PayloadAction<{
+        scenarioId: string;
+        runHistoryId: string;
+        isRunning: boolean;
+      }>,
     ) => {
-      state.isScenarioRunning[action.payload.scenarioId] =
-        action.payload.isRunning;
-        
+      const { scenarioId, runHistoryId, isRunning } = action.payload;
+      if (!scenarioId || !runHistoryId) return;
+      state.runningJobs[runHistoryId] = {
+        scenarioId,
+        isRunning,
+      };
     },
 
-    setScenarioRunningStatus: (
+    setRunningJobStatus: (
       state,
-      action: PayloadAction<{ scenarioId: string; status: RunHistoryStatus }>,
+      action: PayloadAction<{
+        scenarioId: string;
+        runHistoryId: string;
+        status: RunHistoryStatus;
+      }>,
     ) => {
       if (
         !Object.values(RunHistoryStatus).includes(
@@ -38,25 +53,48 @@ const metricsSlice = createSlice({
         return;
       }
 
-      state.isScenarioRunning[action.payload.scenarioId] =
-        action.payload.status === RunHistoryStatus.RUNNING;
+      const { scenarioId, runHistoryId, status } = action.payload;
+      if (!scenarioId || !runHistoryId) return;
+
+      state.runningJobs[runHistoryId] = {
+        scenarioId,
+        isRunning: status === RunHistoryStatus.RUNNING,
+      };
     },
   },
 });
 
 export default metricsSlice.reducer;
 
-export const { setScenarioRunning, setScenarioRunningStatus } =
-  metricsSlice.actions;
+export const { setRunningJob, setRunningJobStatus } = metricsSlice.actions;
 
-export const selectIsScenarioRunning = (state: RootState, scenarioId: string) =>
-  state.metrics.isScenarioRunning[scenarioId];
+export const selectIsRunningJobByRunHistoryId = createSelector(
+  (state: RootState, runHistoryId?: string | null) => ({
+    runningJobs: state.metrics.runningJobs,
+    runHistoryId,
+  }),
+  ({ runningJobs, runHistoryId }) => {
+    if (!runHistoryId) return false;
+    return Object.entries(runningJobs).some(
+      ([key, job]) => key === runHistoryId && job.isRunning,
+    );
+  },
+);
 
-export const selectRunHistoryStatus = (state: RootState) =>
-  state.metrics.runHistoryStatus;
+export const selectIsRunningJobByScenarioId = createSelector(
+  (state: RootState, scenarioId?: string | null) => ({
+    runningJobs: state.metrics.runningJobs,
+    scenarioId,
+  }),
+  ({ runningJobs, scenarioId }) => {
+    if (!scenarioId) return false;
+    return Object.values(runningJobs).some(
+      (job) => job.scenarioId === scenarioId && job.isRunning,
+    );
+  },
+);
 
-export const selectIsRunning = createSelector(
-  (state: RootState) => state.metrics.isScenarioRunning,
-  (isScenarioRunning) =>
-    Object.values(isScenarioRunning).some((isRunning) => isRunning),
+export const selectIsRunningJob = createSelector(
+  (state: RootState) => state.metrics.runningJobs,
+  (runningJobs) => Object.values(runningJobs).some((job) => job.isRunning),
 );
