@@ -5,48 +5,53 @@ export enum RunHistoryStatus {
   ABORTED = "ABORTED",
 }
 
-export interface RunHistoryMetrics {
-  totalRequests: number;
-  successfulRequests: number;
-  failedRequests: number;
-  averageResponseTime: number;
-  minResponseTime: number;
-  maxResponseTime: number;
-  requestsPerSecond: number;
+export interface RunHistoryMetric {
+  id: string;
+  runHistoryId: string;
+  flowId: string;
+  stepId: string;
+  avgLatency: number;
+  p95Latency: number;
+  throughput: number;
   errorRate: number;
+  createdAt: string;
+  updatedAt: string;
+  flow: {
+    id: string;
+    name: string;
+  };
+  step: {
+    id: string;
+    name: string;
+  };
 }
 
 export interface RunHistory {
   id: string;
   scenarioId: string;
+  runAt: string;
+  endAt: string;
+  avgLatency: number;
+  p95Latency: number;
+  throughput: number;
+  errorRate: number;
+  progress: number;
+  status: RunHistoryStatus;
+  createdAt: string;
+  updatedAt: string;
   scenario: {
     id: string;
     name: string;
   };
-  status: RunHistoryStatus;
-  startedAt: string;
-  endedAt: string | null;
-  runAt: string;
-  duration: number;
-  vus: number;
-  avgResponseTime: number;
-  requestsPerSecond: number;
-  errorRate: number;
-  successRate: number;
-  rawResultUrl: string | null;
-  metrics: RunHistoryMetrics | null;
-  progress: number;
-  createdAt: string;
-  updatedAt: string;
+  runHistoryMetrics: RunHistoryMetric[];
 }
 
 export type RunHistoryOrderBy =
   | "runAt"
-  | "vus"
-  | "duration"
-  | "successRate"
-  | "avgResponseTime"
-  | "requestsPerSecond"
+  | "avgLatency"
+  | "p95Latency"
+  | "throughput"
+  | "errorRate"
   | "createdAt";
 
 export interface RunHistoryParams {
@@ -62,16 +67,6 @@ export interface RunHistoryParams {
 
 export interface GetRunHistoryRequest extends RunHistoryParams {
   scenarioId: string | null;
-}
-
-export interface UpdateRunHistoryRequest {
-  status?: RunHistoryStatus;
-  endedAt?: string | null;
-  metrics?: RunHistoryMetrics | null;
-}
-
-export interface CreateRunHistoryRequest {
-  scenarioId: string;
 }
 
 export type RunHistoryWithMetrics = RunHistory;

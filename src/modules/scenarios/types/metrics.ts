@@ -18,11 +18,10 @@ export interface Metrics {
 }
 
 export interface RealtimeMetricsQueryParams {
-  scenarioId: string;
+  scenarioId?: string;
   runHistoryId?: string;
   flowId?: string;
   stepId?: string;
-  duration?: string;
   interval?: string;
   runAt?: string;
   endAt?: string;
@@ -53,8 +52,9 @@ export interface RealtimeMetricsResponse {
   metrics: RealtimeMetrics;
   runAt: string;
   endAt: string | null;
-  progress: number;
   lastUpdated: string;
+  progress: number;
+  status: RunHistoryStatus;
 }
 
 export interface LoadTestMetrics {
