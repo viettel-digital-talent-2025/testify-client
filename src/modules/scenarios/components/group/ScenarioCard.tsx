@@ -42,7 +42,6 @@ export default function ScenarioCard({ scenario }: ScenarioCardProps) {
         {/* Stats */}
         <ScenarioCardStats
           flows={flows}
-          flowType={scenario.flowType}
           virtualUsers={scenario.vus}
           duration={scenario.duration}
         />

@@ -1,18 +1,16 @@
-import { ScenarioFlow, ScenarioFlowType } from "@/scenarios/types/scenario";
+import { ScenarioFlow } from "@/scenarios/types/scenario";
 import { getScenarioStatsIcon } from "@/scenarios/utils/scenarioUtils";
 import { Space } from "antd";
 import Text from "antd/es/typography/Text";
 
 interface ScenarioCardStatsProps {
   flows: ScenarioFlow[];
-  flowType: ScenarioFlowType;
   virtualUsers: number | string;
   duration: number;
 }
 
 export default function ScenarioCardStats({
   flows,
-  flowType,
   virtualUsers,
   duration,
 }: ScenarioCardStatsProps) {
@@ -24,14 +22,10 @@ export default function ScenarioCardStats({
 
   return (
     <div className="flex justify-between text-sm">
-      {flowType === ScenarioFlowType.MULTI && (
-        <>
-          <Space direction="vertical" size={0}>
-            <Text type="secondary">{getScenarioStatsIcon("flows")} Flows</Text>
-            <Text strong>{flowCount}</Text>
-          </Space>
-        </>
-      )}
+      <Space direction="vertical" size={0}>
+        <Text type="secondary">{getScenarioStatsIcon("flows")} Flows</Text>
+        <Text strong>{flowCount}</Text>
+      </Space>
       <Space direction="vertical" size={0}>
         <Text type="secondary">{getScenarioStatsIcon("steps")} Steps</Text>
         <Text strong>{totalSteps}</Text>

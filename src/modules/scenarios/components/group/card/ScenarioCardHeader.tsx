@@ -23,7 +23,7 @@ export default function ScenarioCardHeader(props: ScenarioCardHeaderProps) {
           </Title>
         </div>
         <Tag
-          color={flowType === ScenarioFlowType.MULTI ? "purple" : "cyan"}
+          color={flowType === ScenarioFlowType.MULTI ? "gold" : "cyan"}
           style={{ marginRight: 0 }}
         >
           {flowType}
