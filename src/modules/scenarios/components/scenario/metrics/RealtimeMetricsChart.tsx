@@ -1,12 +1,13 @@
 "use client";
 import { Bottleneck } from "@/bottlenecks/types/bottleneck";
 import { useGetMetricsQuery } from "@/scenarios/apis/metricsApi";
-import { selectIsScenarioRunning } from "@/scenarios/slices/metricsSlice";
 import {
   selectSelectedScenario,
   selectSelectedSteps,
   setSelectedSteps,
 } from "@/scenarios/slices/scenariosSlice";
+import { RunHistoryStatus } from "@/scenarios/types/runHistory";
+import { getProgressStatus } from "@/scenarios/utils/metricsUtils";
 import { colors } from "@/shared/constants/colors";
 import { useAppDispatch, useAppSelector } from "@/shared/hooks";
 import { Card, Col, Progress, Row, Select, Spin, Tag } from "antd";
@@ -47,10 +48,11 @@ ChartJS.register(
 );
 
 export function RealtimeMetricsChart({
-  id,
+  isRunning,
+  scenarioId,
+  runHistoryId,
   flowId,
   stepId,
-  runHistoryId,
   title,
   showFilter = false,
   showViewDetails = false,
@@ -60,10 +62,11 @@ export function RealtimeMetricsChart({
   bottlenecks,
   style,
 }: {
-  id?: string | null;
+  isRunning: boolean;
+  scenarioId?: string | null;
+  runHistoryId?: string;
   flowId?: string;
   stepId?: string;
-  runHistoryId?: string;
   title?: string;
   showViewDetails?: boolean;
   showFilter?: boolean;
@@ -73,21 +76,16 @@ export function RealtimeMetricsChart({
   bottlenecks?: Bottleneck[];
   style?: React.CSSProperties;
 }) {
-  const isRunning = useAppSelector((state) =>
-    selectIsScenarioRunning(state, id as string),
-  );
-
   const { data: metrics, isLoading } = useGetMetricsQuery(
     {
-      scenarioId: id as string,
-      runHistoryId,
+      scenarioId: scenarioId ?? undefined,
+      runHistoryId: runHistoryId ?? undefined,
       flowId,
       stepId,
-      duration: "300",
       interval: "5s",
     },
     {
-      skip: !id,
+      skip: !scenarioId,
       pollingInterval: isRunning ? 1000 : 0,
     },
   );
@@ -128,7 +126,7 @@ export function RealtimeMetricsChart({
           </div>
           {showFilter && <RealtimeMetricsFilter />}
           {showViewDetails && (
-            <Link href={`/scenarios/${id}`}>View Details</Link>
+            <Link href={`/scenarios/${scenarioId}`}>View Details</Link>
           )}
         </div>
         <Row gutter={[16, 16]}>
@@ -158,7 +156,10 @@ export function RealtimeMetricsChart({
                 <Progress
                   size="small"
                   percent={metrics?.progress ?? 0}
-                  status={metrics?.progress === 100 ? "success" : "active"}
+                  status={getProgressStatus(
+                    metrics?.progress ?? 0,
+                    metrics?.status ?? RunHistoryStatus.RUNNING,
+                  )}
                 />
               )}
             </Col>
@@ -370,7 +371,7 @@ function LineMetricsCard({
               const timestamp = formatTime(data[item.dataIndex].timestamp);
               const bottleneck = bottlenecksByTimestamp.get(timestamp);
 
-              const value = (item.raw as number).toFixed(5);
+              const value = item.raw as number;
               if (bottleneck) {
                 const lines = [
                   `${item.dataset.label}: ${value} ${unit}`,
