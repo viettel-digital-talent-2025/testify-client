@@ -1,7 +1,7 @@
 "use client";
 import { setSelectedRunHistory } from "@/dashboard/slices/dashboardSlice";
 import { useGetRunHistoriesQuery } from "@/scenarios/apis/runHistoryApi";
-import { selectIsRunning } from "@/scenarios/slices/metricsSlice";
+import { selectIsRunningJob } from "@/scenarios/slices/metricsSlice";
 import { RunHistoryStatus } from "@/scenarios/types/runHistory";
 import { useAppDispatch, useAppSelector } from "@/shared/hooks";
 import dayjs from "dayjs";
@@ -10,7 +10,7 @@ import RunHistoryListCard from "./RunHistoryListCard";
 
 export default function RunningScenarios() {
   const dispatch = useAppDispatch();
-  const isRunning = useAppSelector(selectIsRunning);
+  const isRunning = useAppSelector(selectIsRunningJob);
   const [hasSelected, setHasSelected] = useState(false);
   const params = useMemo(
     () => ({

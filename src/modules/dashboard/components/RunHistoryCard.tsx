@@ -7,6 +7,7 @@ import { RunHistory } from "@/scenarios/types/runHistory";
 import {
   getRunHistoryStatusColor,
   getScenarioStatsIcon,
+  getProgressStatus,
 } from "@/scenarios/utils";
 import { colors } from "@/shared/constants/colors";
 import { useAppDispatch, useAppSelector } from "@/shared/hooks";
@@ -22,10 +23,10 @@ export default function RunHistoryCard({ history }: { history: RunHistory }) {
     scenario,
     status,
     runAt,
-    vus,
-    duration,
-    avgResponseTime,
-    successRate,
+    avgLatency,
+    p95Latency,
+    throughput,
+    errorRate,
     progress,
   } = history;
 
@@ -66,20 +67,20 @@ export default function RunHistoryCard({ history }: { history: RunHistory }) {
         <Col span={24}>
           <div className="flex justify-between gap-2">
             <Text>
-              {getScenarioStatsIcon("vus")}{" "}
-              <Text type="secondary">{vus} VUs</Text>
+              {getScenarioStatsIcon("avgLatency")}{" "}
+              <Text type="secondary">{avgLatency.toFixed(2)}ms</Text>
             </Text>
             <Text>
-              {getScenarioStatsIcon("duration")}{" "}
-              <Text type="secondary">{duration}s</Text>
+              {getScenarioStatsIcon("p95Latency")}{" "}
+              <Text type="secondary">{p95Latency.toFixed(2)}ms</Text>
             </Text>
             <Text>
-              {getScenarioStatsIcon("avgResponseTime")}{" "}
-              <Text type="secondary">{avgResponseTime.toFixed(1)}ms</Text>
+              {getScenarioStatsIcon("throughput")}{" "}
+              <Text type="secondary">{throughput.toFixed(2)}req/s</Text>
             </Text>
             <Text>
-              {getScenarioStatsIcon("successRate")}{" "}
-              <Text type="secondary">{(successRate * 100).toFixed(1)}%</Text>
+              {getScenarioStatsIcon("errorRate")}{" "}
+              <Text type="secondary">{errorRate.toFixed(2)}%</Text>
             </Text>
           </div>
         </Col>
@@ -87,8 +88,8 @@ export default function RunHistoryCard({ history }: { history: RunHistory }) {
           <div className="">
             <Progress
               size="small"
-              percent={progress ?? Math.floor(successRate * 100)}
-              status={progress === 100 ? "success" : "active"}
+              percent={progress ?? Math.floor(errorRate * 100)}
+              status={getProgressStatus(progress, status)}
               showInfo={true}
             />
           </div>

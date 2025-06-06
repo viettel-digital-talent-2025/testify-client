@@ -29,9 +29,9 @@ export default function RecentRuns() {
 
   return (
     <RunHistoryListCard
-      title="Recent Runs"
+      title="Latest Scenario Runs"
       data={data?.data}
-      emptyText="No recent runs"
+      emptyText="No recent scenario runs"
     />
   );
 }

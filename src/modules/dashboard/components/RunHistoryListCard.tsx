@@ -15,6 +15,7 @@ interface RunHistoryListCardProps {
 
 export default function RunHistoryListCard(props: RunHistoryListCardProps) {
   const { title, data, emptyText } = props;
+  const hasData = data && data.length > 0;
   return (
     <Card>
       <Space direction="vertical" style={{ width: "100%" }}>
@@ -28,19 +29,20 @@ export default function RunHistoryListCard(props: RunHistoryListCardProps) {
             </Text>
           </div>
         </div>
-        {!data ||
-          data?.length === 0 ||
-          (!data && (
-            <Paragraph
-              type="secondary"
-              style={{ textAlign: "center", margin: 0 }}
-            >
-              {emptyText}
-            </Paragraph>
-          ))}
-        {data?.map((history) => (
-          <RunHistoryCard key={history.id} history={history} />
-        ))}
+        {!hasData ? (
+          <Paragraph
+            type="secondary"
+            style={{ textAlign: "center", margin: 0 }}
+          >
+            {emptyText}
+          </Paragraph>
+        ) : (
+          <>
+            {data?.map((history) => (
+              <RunHistoryCard key={history.id} history={history} />
+            ))}
+          </>
+        )}
       </Space>
     </Card>
   );
