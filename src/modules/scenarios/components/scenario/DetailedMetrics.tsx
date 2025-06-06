@@ -1,5 +1,6 @@
 "use client";
 import { RealtimeMetricsChart } from "@/scenarios/components/scenario/metrics/RealtimeMetricsChart";
+import { selectIsRunningJobByScenarioId } from "@/scenarios/slices/metricsSlice";
 import {
   selectSelectedScenarioId,
   selectSelectedSteps,
@@ -10,6 +11,9 @@ import { Space } from "antd";
 export default function DetailedMetrics() {
   const id = useAppSelector(selectSelectedScenarioId);
   const selectedSteps = useAppSelector(selectSelectedSteps);
+  const isRunning = useAppSelector((state) =>
+    selectIsRunningJobByScenarioId(state, id),
+  );
 
   return (
     <>
@@ -18,7 +22,8 @@ export default function DetailedMetrics() {
           {selectedSteps.map((step) => (
             <div key={`${step.flowId}-${step.stepId}`}>
               <RealtimeMetricsChart
-                id={id}
+                isRunning={isRunning}
+                scenarioId={id}
                 flowId={step.flowId}
                 stepId={step.stepId}
                 title={`${step.flowName} ${step.stepName ? `- ${step.stepName}` : ""}`}

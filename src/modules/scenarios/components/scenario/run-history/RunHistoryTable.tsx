@@ -14,12 +14,13 @@ import {
   RunHistoryOrderBy,
   RunHistoryStatus,
 } from "@/scenarios/types/runHistory";
+import { getProgressStatus } from "@/scenarios/utils";
 import {
   getRunHistoryStatusColor,
   getRunHistoryStatusIcon,
 } from "@/scenarios/utils/runHistoryUtils";
 import { useAppDispatch, useAppSelector } from "@/shared/hooks";
-import { DownloadOutlined, LineChartOutlined } from "@ant-design/icons";
+import { LineChartOutlined } from "@ant-design/icons";
 import {
   Button,
   Progress,
@@ -37,7 +38,13 @@ import {
   TableRowSelection,
 } from "antd/es/table/interface";
 import dayjs from "dayjs";
+import timezone from "dayjs/plugin/timezone";
+import utc from "dayjs/plugin/utc";
 import { useCallback, useMemo } from "react";
+
+// Add timezone plugins
+dayjs.extend(utc);
+dayjs.extend(timezone);
 
 export default function RunHistoryTable() {
   const dispatch = useAppDispatch();
@@ -56,7 +63,7 @@ export default function RunHistoryTable() {
   const rowSelection: TableRowSelection<RunHistory> = {
     preserveSelectedRowKeys: true,
     selectedRowKeys: selectedRunIds,
-    onChange: (selectedRowKeys: React.Key[], selectedRows: RunHistory[]) => {
+    onChange: (_selectedRowKeys: React.Key[], selectedRows: RunHistory[]) => {
       if (!scenarioId || !data?.data) return;
       dispatch(setSelectedRuns({ scenarioId, runs: selectedRows }));
     },
@@ -101,7 +108,8 @@ export default function RunHistoryTable() {
         dataIndex: "runAt",
         key: "runAt",
         width: 100,
-        render: (date: string) => dayjs(date).format("YYYY-MM-DD HH:mm:ss"),
+        render: (date: string) =>
+          dayjs(date).tz("Asia/Ho_Chi_Minh").format("HH:mm:ss DD/MM/YYYY"),
       },
       {
         title: "Status",
@@ -122,32 +130,33 @@ export default function RunHistoryTable() {
         })),
       },
       {
-        title: "Duration",
-        dataIndex: "duration",
-        key: "duration",
-        width: 100,
-        sorter: true,
-        render: (duration: number) => `${duration}s`,
-      },
-      {
-        title: "VUs",
-        dataIndex: "vus",
-        key: "vus",
-        width: 80,
-        sorter: true,
-      },
-      {
-        title: "Avg Response Time",
-        dataIndex: "avgResponseTime",
-        key: "avgResponseTime",
+        title: "Avg Latency",
+        dataIndex: "avgLatency",
+        key: "avgLatency",
         width: 100,
         sorter: true,
         render: (time: number) => `${time.toFixed(2)}ms`,
       },
       {
-        title: "Success Rate",
-        dataIndex: "successRate",
-        key: "successRate",
+        title: "P95 Latency",
+        dataIndex: "p95Latency",
+        key: "p95Latency",
+        width: 100,
+        sorter: true,
+        render: (time: number) => `${time.toFixed(2)}ms`,
+      },
+      {
+        title: "Throughput",
+        dataIndex: "throughput",
+        key: "throughput",
+        width: 100,
+        sorter: true,
+        render: (throughput: number) => `${throughput.toFixed(2)}req/s`,
+      },
+      {
+        title: "Error Rate",
+        dataIndex: "errorRate",
+        key: "errorRate",
         width: 100,
         sorter: true,
         render: (rate: number) => `${(rate * 100).toFixed(2)}%`,
@@ -157,9 +166,17 @@ export default function RunHistoryTable() {
         dataIndex: "progress",
         key: "progress",
         width: 100,
-        render: (progress: number) => (
-          <Progress percent={progress} size="small" />
-        ),
+        render: (progress: number, record: RunHistory) => {
+          return (
+            <>
+              <Progress
+                size="small"
+                percent={progress}
+                status={getProgressStatus(progress, record.status)}
+              />
+            </>
+          );
+        },
       },
       {
         title: "Actions",
@@ -173,15 +190,6 @@ export default function RunHistoryTable() {
                 onClick={() => onViewDetails(record)}
               />
             </Tooltip>
-            {record.rawResultUrl && (
-              <Tooltip title="Download Results">
-                <Button
-                  icon={<DownloadOutlined />}
-                  href={record.rawResultUrl}
-                  target="_blank"
-                />
-              </Tooltip>
-            )}
           </Space>
         ),
       },

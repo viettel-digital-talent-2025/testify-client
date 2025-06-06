@@ -10,7 +10,8 @@ import { BarChartOutlined } from "@ant-design/icons";
 import { Button, DatePicker, Space } from "antd";
 import Search from "antd/es/input/Search";
 import dayjs, { Dayjs } from "dayjs";
-import { ChangeEvent, useCallback, useMemo } from "react";
+import { ChangeEvent, useCallback, useEffect, useMemo, useState } from "react";
+import { useDebounce } from "use-debounce";
 const { RangePicker } = DatePicker;
 
 export default function RunHistoryFilters() {
@@ -25,22 +26,25 @@ export default function RunHistoryFilters() {
 
 const SearchFilter = () => {
   const dispatch = useAppDispatch();
-  const { search } = useAppSelector(selectRunHistoryParams);
+  const [searchValue, setSearchValue] = useState("");
+  const [debouncedValue] = useDebounce(searchValue, 500);
 
-  const onSearchChange = useCallback(
-    (e: ChangeEvent<HTMLInputElement>) => {
-      dispatch(setParams({ search: e.target.value }));
-    },
-    [dispatch],
-  );
+  useEffect(() => {
+    dispatch(setParams({ search: debouncedValue }));
+    console.log(debouncedValue);
+  }, [dispatch, debouncedValue]);
+
+  const onSearchChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
+    setSearchValue(e.target.value);
+  }, []);
 
   return (
     <Search
-      placeholder="Search by ID or scenario"
       allowClear
-      value={search}
+      placeholder="Search status, metrics, etc..."
+      value={searchValue}
       onChange={onSearchChange}
-      style={{ width: 200 }}
+      style={{ width: 250 }}
     />
   );
 };
@@ -93,7 +97,6 @@ const CompareButton = () => {
       type="primary"
       icon={<BarChartOutlined />}
       onClick={onCompare}
-      disabled={runs.length < 2}
     >
       Compare ({runs.length})
     </Button>

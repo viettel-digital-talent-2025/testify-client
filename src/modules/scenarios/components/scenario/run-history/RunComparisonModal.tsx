@@ -87,7 +87,7 @@ export default function RunComparisonModal() {
             <Space>
               <Text>{formattedValue}</Text>
               {diff !== 0 && (
-                <Tag color={isBetter ? colors.success : colors.error}>
+                <Tag color={isBetter ? "green" : "red"}>
                   {diff > 0 ? <ArrowUpOutlined /> : <ArrowDownOutlined />}
                   {Math.abs(diff).toFixed(1)}%
                 </Tag>
@@ -111,105 +111,44 @@ export default function RunComparisonModal() {
   const metrics: Metrics[] = useMemo(
     () => [
       {
-        key: "duration",
-        metric: "Duration",
-        description: "Total duration of the test run",
-        format: (value: number) => {
-          const h = Math.floor(value / 3600);
-          const m = Math.floor((value % 3600) / 60);
-          const s = value % 60;
-          const parts = [];
-          if (h) parts.push(`${h}h`);
-          if (m) parts.push(`${m}m`);
-          if (s || (!h && !m)) parts.push(`${s}s`);
-          return parts.join(" ");
-        },
-        calculateDiff: calculatePercentageDiff,
-        isBetter: (diff) => diff < 0, // Shorter duration is better
-      },
-      {
-        key: "vus",
-        metric: "Virtual Users",
-        description: "Number of concurrent virtual users",
-        format: (value: number) => value.toString(),
-      },
-      {
-        key: "totalRequests",
-        metric: "Total Requests",
-        description: "Total number of requests made during the test",
-        format: (value: number) => value.toLocaleString(),
-        calculateDiff: calculatePercentageDiff,
-        isBetter: (diff) => diff > 0, // More requests is better
-      },
-      {
-        key: "avgResponseTime",
-        metric: "Avg Response Time",
+        key: "avgLatency",
+        metric: "Average Latency",
         description: "Average response time across all requests",
         format: (value: number) => `${value.toFixed(2)}ms`,
         calculateDiff: calculatePercentageDiff,
-        isBetter: (diff) => diff < 0, // Lower response time is better
+        isBetter: (diff) => diff < 0, // Lower latency is better
       },
       {
-        key: "p95ResponseTime",
-        metric: "95th Percentile Response Time",
+        key: "p95Latency",
+        metric: "95th Percentile Latency",
         description: "95% of requests completed within this time",
         format: (value: number) => `${value.toFixed(2)}ms`,
         calculateDiff: calculatePercentageDiff,
         isBetter: (diff) => diff < 0,
       },
       {
-        key: "p99ResponseTime",
-        metric: "99th Percentile Response Time",
-        description: "99% of requests completed within this time",
-        format: (value: number) => `${value.toFixed(2)}ms`,
+        key: "throughput",
+        metric: "Throughput",
+        description: "Average number of requests processed per second",
+        format: (value: number) => `${value.toFixed(2)} req/s`,
         calculateDiff: calculatePercentageDiff,
-        isBetter: (diff) => diff < 0,
-      },
-      {
-        key: "successRate",
-        metric: "Success Rate",
-        description: "Percentage of successful requests",
-        format: (value: number) => `${(value * 100).toFixed(1)}%`,
-        calculateDiff: (current, previous) => (current - previous) * 100,
-        isBetter: (diff) => diff > 0,
+        isBetter: (diff) => diff > 0, // Higher throughput is better
       },
       {
         key: "errorRate",
         metric: "Error Rate",
         description: "Percentage of failed requests",
-        format: (value: number) => `${(value * 100).toFixed(1)}%`,
+        format: (value: number) => `${(value * 100).toFixed(2)}%`,
         calculateDiff: (current, previous) => (current - previous) * 100,
-        isBetter: (diff) => diff < 0,
+        isBetter: (diff) => diff < 0, // Lower error rate is better
       },
       {
-        key: "requestsPerSecond",
-        metric: "Throughput",
-        description: "Average number of requests processed per second",
-        format: (value: number) => `${value.toFixed(2)} req/s`,
-        calculateDiff: calculatePercentageDiff,
-        isBetter: (diff) => diff > 0,
-      },
-      {
-        key: "dataTransferred",
-        metric: "Data Transferred",
-        description: "Total amount of data transferred during the test",
-        format: (value: number) => {
-          const mb = value / (1024 * 1024);
-          return `${mb.toFixed(2)} MB`;
-        },
-        calculateDiff: calculatePercentageDiff,
-        isBetter: (diff) => diff > 0,
-      },
-      {
-        key: "avgRequestSize",
-        metric: "Avg Request Size",
-        description: "Average size of each request",
-        format: (value: number) => {
-          const kb = value / 1024;
-          return `${kb.toFixed(2)} KB`;
-        },
-        calculateDiff: calculatePercentageDiff,
-        isBetter: (diff) => diff < 0,
+        key: "progress",
+        metric: "Progress",
+        description: "Test execution progress",
+        format: (value: number) => `${value}%`,
+        calculateDiff: (current, previous) => current - previous,
+        isBetter: (diff) => diff > 0, // Higher progress is better
       },
     ],
     [calculatePercentageDiff],
@@ -236,6 +175,17 @@ export default function RunComparisonModal() {
         <Space>
           <Text strong>Compare Runs</Text>
           <Tag color={colors.primary}>{sortedRuns.length} runs</Tag>
+          <Text type="secondary" style={{ fontSize: "12px" }}>
+            {sortedRuns.length > 0 && (
+              <>
+                Comparing runs from{" "}
+                {dayjs(sortedRuns[0].runAt).format("MMM D, HH:mm")} to{" "}
+                {dayjs(sortedRuns[sortedRuns.length - 1].runAt).format(
+                  "MMM D, HH:mm",
+                )}
+              </>
+            )}
+          </Text>
         </Space>
       }
       open={open}
