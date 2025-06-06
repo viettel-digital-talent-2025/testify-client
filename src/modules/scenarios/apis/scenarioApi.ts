@@ -1,5 +1,5 @@
 "use client";
-import { setScenarioRunningStatus } from "@/scenarios/slices/metricsSlice";
+import { setRunningJobStatus } from "@/scenarios/slices/metricsSlice";
 import {
   CreateScenarioRequest,
   Scenario,
@@ -29,8 +29,9 @@ export const scenarioApi = appApi.injectEndpoints({
         scenarios.forEach((scenario) => {
           scenario.runHistories.forEach((runHistory) => {
             dispatch(
-              setScenarioRunningStatus({
+              setRunningJobStatus({
                 scenarioId: scenario.id,
+                runHistoryId: runHistory.id,
                 status: runHistory.status,
               }),
             );
@@ -49,8 +50,9 @@ export const scenarioApi = appApi.injectEndpoints({
         const res = await queryFulfilled;
         const scenario = res.data;
         dispatch(
-          setScenarioRunningStatus({
+          setRunningJobStatus({
             scenarioId: scenario.id,
+            runHistoryId: scenario.runHistories[0]?.id,
             status: scenario.runHistories[0]?.status,
           }),
         );
