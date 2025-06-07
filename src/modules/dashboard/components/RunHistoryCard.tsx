@@ -5,9 +5,9 @@ import {
 } from "@/dashboard/slices/dashboardSlice";
 import { RunHistory } from "@/scenarios/types/runHistory";
 import {
+  getProgressStatus,
   getRunHistoryStatusColor,
   getScenarioStatsIcon,
-  getProgressStatus,
 } from "@/scenarios/utils";
 import { colors } from "@/shared/constants/colors";
 import { useAppDispatch, useAppSelector } from "@/shared/hooks";
@@ -58,7 +58,7 @@ export default function RunHistoryCard({ history }: { history: RunHistory }) {
               {status}
             </Tag>
           </div>
-          <Tooltip title={dayjs(runAt).format("YYYY-MM-DD HH:mm:ss")}>
+          <Tooltip title={dayjs(runAt).format("HH:mm:ss DD/MM/YYYY")}>
             <Text type="secondary">
               {formatDistanceToNow(runAt, { addSuffix: true })}
             </Text>

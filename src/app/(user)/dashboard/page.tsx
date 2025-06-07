@@ -1,7 +1,9 @@
 import {
+  BottlenecksCount,
   MetricsCard,
   RecentRuns,
   RunningScenarios,
+  ScenarioCount,
 } from "@/dashboard/components";
 import { PageTitle } from "@/shared/components/pages";
 import { Col, Row } from "antd";
@@ -40,7 +42,17 @@ export default function DashboardPage() {
             </Row>
           </Col>
           <Col span={17}>
-            <MetricsCard />
+            <Row gutter={[16, 16]}>
+              <Col span={12}>
+                <ScenarioCount />
+              </Col>
+              <Col span={12}>
+                <BottlenecksCount />
+              </Col>
+              <Col span={24}>
+                <MetricsCard />
+              </Col>
+            </Row>
           </Col>
         </Row>
       </div>
