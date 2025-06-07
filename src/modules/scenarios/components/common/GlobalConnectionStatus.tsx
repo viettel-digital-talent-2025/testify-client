@@ -1,20 +1,10 @@
 "use client";
 import { bottlenecksApi } from "@/bottlenecks/apis/bottlenecksApi";
 import { runHistoriesApi } from "@/scenarios/apis/runHistoryApi";
-import { setScenarioRunningStatus } from "@/scenarios/slices/metricsSlice";
-import { RunHistoryStatus } from "@/scenarios/types/runHistory";
+import { setRunningJobStatus } from "@/scenarios/slices/metricsSlice";
+import { LoadTestStatusEvent } from "@/scenarios/types/loadTest";
 import { useAppDispatch, useAppSelector } from "@/shared/hooks";
 import { useEffect } from "react";
-
-interface ScenarioStatusUpdate {
-  userId: string;
-  scenarioId: string;
-  runHistoryId: string;
-  status: RunHistoryStatus;
-  type: string;
-  id: string;
-  retry: number;
-}
 
 export default function GlobalConnectionStatus() {
   const dispatch = useAppDispatch();
@@ -31,10 +21,11 @@ export default function GlobalConnectionStatus() {
 
     const handleMessage = (event: MessageEvent) => {
       try {
-        const data = JSON.parse(event.data) as ScenarioStatusUpdate;
-        const { scenarioId, status } = data;
+        const data = JSON.parse(event.data) as LoadTestStatusEvent;
+        const { scenarioId, runHistoryId, status } = data;
+        console.log("data", data);
         if (status) {
-          dispatch(setScenarioRunningStatus({ scenarioId, status }));
+          dispatch(setRunningJobStatus({ scenarioId, runHistoryId, status }));
           dispatch(
             runHistoriesApi.util.invalidateTags([
               { type: "RunHistory", id: "LIST" },

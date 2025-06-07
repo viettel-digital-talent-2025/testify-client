@@ -3,7 +3,7 @@ import {
   useRunLoadTestMutation,
   useStopLoadTestMutation,
 } from "@/scenarios/apis/loadTestApi";
-import { selectIsScenarioRunning } from "@/scenarios/slices/metricsSlice";
+import { selectIsRunningJobByScenarioId } from "@/scenarios/slices/metricsSlice";
 import { useAppSelector } from "@/shared/hooks";
 import { PlayCircleOutlined, StopOutlined } from "@ant-design/icons";
 import { Button, Popconfirm, Space } from "antd";
@@ -15,7 +15,7 @@ interface LoadTestButtonProps {
 
 export default function LoadTestButton({ scenarioId }: LoadTestButtonProps) {
   const isRunning = useAppSelector((state) =>
-    selectIsScenarioRunning(state, scenarioId),
+    selectIsRunningJobByScenarioId(state, scenarioId),
   );
 
   return (
