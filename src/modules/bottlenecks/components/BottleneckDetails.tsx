@@ -8,7 +8,7 @@ import {
 } from "@/scenarios/slices/scenariosSlice";
 import { PageTitle } from "@/shared/components/pages";
 import { useAppDispatch, useAppSelector } from "@/shared/hooks";
-import { Tabs } from "antd";
+import { Tabs, Typography } from "antd";
 import Card from "antd/es/card/Card";
 import { useEffect, useMemo } from "react";
 import { useSelector } from "react-redux";
@@ -93,7 +93,7 @@ export default function BottleneckDetails() {
     ];
   }, [runHistory, allBottlenecks, selectedSteps]);
 
-  if (isLoading || !runHistory) {
+  if (isLoading) {
     return <Card loading={isLoading} />;
   }
 
@@ -103,15 +103,22 @@ export default function BottleneckDetails() {
         title="Bottleneck Detection"
         description="AI-powered detection and analysis of performance bottlenecks in your test scenarios."
       />
-      <Tabs
-        items={items}
-        style={{
-          flex: 1,
-          height: "100%",
-          overflowY: "auto",
-          overflowX: "hidden",
-        }}
-      />
+      {runHistory?.scenario?.flows?.length &&
+      runHistory?.scenario?.flows?.length > 0 ? (
+        <Tabs
+          items={items}
+          style={{
+            flex: 1,
+            height: "100%",
+            overflowY: "auto",
+            overflowX: "hidden",
+          }}
+        />
+      ) : (
+        <Typography.Paragraph type="secondary" style={{ textAlign: "center" }}>
+          No bottlenecks found
+        </Typography.Paragraph>
+      )}
     </div>
   );
 }

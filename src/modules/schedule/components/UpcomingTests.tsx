@@ -266,20 +266,24 @@ export default function UpcomingTests() {
         </Button>
       }
     >
-      <div className="flex flex-1 flex-col gap-3 overflow-y-auto">
-        {isLoading ? (
-          <Card loading={true} />
-        ) : (
-          schedules.map((schedule) => (
+      {isLoading ? (
+        <Card loading={true} />
+      ) : schedules.length > 0 ? (
+        <div className="flex flex-1 flex-col gap-3 overflow-y-auto">
+          {schedules.map((schedule) => (
             <ScheduleCard
               key={schedule.id}
               schedule={schedule}
               onEdit={onEdit}
               onDelete={onDelete}
             />
-          ))
-        )}
-      </div>
+          ))}
+        </div>
+      ) : (
+        <Typography.Paragraph type="secondary" style={{ textAlign: "center" }}>
+          No upcoming tests
+        </Typography.Paragraph>
+      )}
     </Card>
   );
 }
