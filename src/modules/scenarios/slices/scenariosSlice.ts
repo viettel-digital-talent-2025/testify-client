@@ -1,4 +1,5 @@
 "use client";
+import { BottleneckSeverity } from "@/bottlenecks/types/bottleneck";
 import { RootState } from "@/shared/store/store";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { Scenario } from "../types/scenario";
@@ -15,6 +16,7 @@ export type ScenariosState = {
   selectedScenarioId: string | null;
   selectedScenario: Scenario | null;
   selectedSteps: SelectedStep[];
+  selectedSeverity: BottleneckSeverity[];
 };
 
 const initialState: ScenariosState = {
@@ -22,6 +24,7 @@ const initialState: ScenariosState = {
   selectedScenarioId: null,
   selectedScenario: null,
   selectedSteps: [],
+  selectedSeverity: [],
 };
 
 const scenariosSlice = createSlice({
@@ -49,6 +52,13 @@ const scenariosSlice = createSlice({
     setSelectedSteps: (state, action: PayloadAction<SelectedStep[]>): void => {
       state.selectedSteps = action.payload;
     },
+
+    setSelectedSeverity: (
+      state,
+      action: PayloadAction<BottleneckSeverity[]>,
+    ): void => {
+      state.selectedSeverity = action.payload;
+    },
   },
 });
 
@@ -59,6 +69,7 @@ export const {
   setSelectedScenarioId,
   setSelectedScenario,
   setSelectedSteps,
+  setSelectedSeverity,
 } = scenariosSlice.actions;
 
 export const selectSelectedGroupId = (state: RootState) =>
@@ -72,3 +83,6 @@ export const selectSelectedScenario = (state: RootState) =>
 
 export const selectSelectedSteps = (state: RootState) =>
   state.scenarios.selectedSteps;
+
+export const selectSelectedSeverity = (state: RootState) =>
+  state.scenarios.selectedSeverity;

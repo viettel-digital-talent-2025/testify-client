@@ -1,9 +1,15 @@
 "use client";
-import { Bottleneck } from "@/bottlenecks/types/bottleneck";
+import {
+  Bottleneck,
+  BottleneckSeverity,
+  BottleneckSource,
+} from "@/bottlenecks/types/bottleneck";
 import { useGetMetricsQuery } from "@/scenarios/apis/metricsApi";
 import {
   selectSelectedScenario,
+  selectSelectedSeverity,
   selectSelectedSteps,
+  setSelectedSeverity,
   setSelectedSteps,
 } from "@/scenarios/slices/scenariosSlice";
 import { RunHistoryStatus } from "@/scenarios/types/runHistory";
@@ -59,6 +65,7 @@ export function RealtimeMetricsChart({
   showScenarioName = false,
   showLastUpdated = true,
   showProgress = true,
+  showSeverity = false,
   bottlenecks,
   style,
 }: {
@@ -73,6 +80,7 @@ export function RealtimeMetricsChart({
   showScenarioName?: boolean;
   showLastUpdated?: boolean;
   showProgress?: boolean;
+  showSeverity?: boolean;
   bottlenecks?: Bottleneck[];
   style?: React.CSSProperties;
 }) {
@@ -89,6 +97,32 @@ export function RealtimeMetricsChart({
       pollingInterval: isRunning ? 1000 : 0,
     },
   );
+
+  const selectedSeverity = useAppSelector(selectSelectedSeverity);
+  const filteredBottlenecks = useMemo(() => {
+    if (!bottlenecks) return [];
+    return bottlenecks.filter((bottleneck) =>
+      selectedSeverity.includes(bottleneck.severity),
+    );
+  }, [bottlenecks, selectedSeverity]);
+
+  const bottleneckLatency = useMemo(() => {
+    return filteredBottlenecks.filter((bottleneck) =>
+      bottleneck.source.includes(BottleneckSource.LATENCY),
+    );
+  }, [filteredBottlenecks]);
+
+  const bottleneckThroughput = useMemo(() => {
+    return filteredBottlenecks.filter((bottleneck) =>
+      bottleneck.source.includes(BottleneckSource.THROUGHPUT),
+    );
+  }, [filteredBottlenecks]);
+
+  const bottleneckErrorRate = useMemo(() => {
+    return filteredBottlenecks.filter((bottleneck) =>
+      bottleneck.source.includes(BottleneckSource.ERROR_RATE),
+    );
+  }, [filteredBottlenecks]);
 
   return (
     <Card style={style}>
@@ -107,7 +141,7 @@ export function RealtimeMetricsChart({
               </Tag>
             )}
           </div>
-          {showFilter && <RealtimeMetricsFilter />}
+          {showFilter && <RealtimeMetricsFilter showSeverity={showSeverity} />}
           {showViewDetails && scenarioId && (
             <Link href={`/scenarios/${scenarioId}`}>View Details</Link>
           )}
@@ -157,7 +191,7 @@ export function RealtimeMetricsChart({
                 color={colors.blue}
                 valueKey="avg"
                 unit="ms"
-                bottlenecks={bottlenecks}
+                bottlenecks={bottleneckLatency}
                 metricType="latency"
               />
             )}
@@ -172,7 +206,7 @@ export function RealtimeMetricsChart({
                 color={colors.green}
                 valueKey="value"
                 unit="req/s"
-                bottlenecks={bottlenecks}
+                bottlenecks={bottleneckThroughput}
                 metricType="throughput"
               />
             )}
@@ -187,7 +221,7 @@ export function RealtimeMetricsChart({
                 color={colors.error}
                 valueKey="value"
                 unit="%"
-                bottlenecks={bottlenecks}
+                bottlenecks={bottleneckErrorRate}
                 metricType="errorRate"
               />
             )}
@@ -198,14 +232,20 @@ export function RealtimeMetricsChart({
   );
 }
 
-function RealtimeMetricsFilter() {
+function RealtimeMetricsFilter({
+  showSeverity = true,
+}: {
+  showSeverity?: boolean;
+}) {
   const dispatch = useAppDispatch();
   const scenario = useAppSelector(selectSelectedScenario);
   const selectedSteps = useAppSelector(selectSelectedSteps);
+  const selectedSeverity = useAppSelector(selectSelectedSeverity);
 
   useEffect(() => {
     dispatch(setSelectedSteps([]));
-  }, [dispatch, scenario]);
+    dispatch(setSelectedSeverity([BottleneckSeverity.HIGH]));
+  }, [dispatch, scenario?.id]);
 
   const options = useMemo(() => {
     const allSteps =
@@ -256,11 +296,32 @@ function RealtimeMetricsFilter() {
     [dispatch, options],
   );
 
+  const handleSeveritySelect = useCallback(
+    (values: BottleneckSeverity[]) => {
+      dispatch(setSelectedSeverity(values));
+    },
+    [dispatch],
+  );
+
   const isSingleStep =
     scenario?.flows?.length === 1 && scenario?.flows[0].steps.length === 1;
 
   return (
     <div className="flex items-center justify-between gap-4">
+      {showSeverity && (
+        <Select
+          allowClear
+          mode="multiple"
+          placeholder="Select severity"
+          onChange={handleSeveritySelect}
+          options={Object.values(BottleneckSeverity).map((severity) => ({
+            label: severity,
+            value: severity,
+          }))}
+          value={selectedSeverity}
+          style={{ width: "200px" }}
+        />
+      )}
       <Select
         allowClear
         mode="multiple"
