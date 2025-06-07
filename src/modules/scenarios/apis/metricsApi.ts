@@ -4,6 +4,8 @@ import {
   RealtimeMetricsResponse,
 } from "@/scenarios/types/metrics";
 import { appApi } from "@/shared/store/api/appApi";
+import { setRunningJobStatus } from "../slices/metricsSlice";
+import { RunHistoryStatus } from "../types/runHistory";
 
 export const metricsApi = appApi.injectEndpoints({
   endpoints: (builder) => ({
@@ -20,6 +22,19 @@ export const metricsApi = appApi.injectEndpoints({
           ...rest,
         },
       }),
+      async onQueryStarted(_, { dispatch, queryFulfilled }) {
+        const res = await queryFulfilled;
+        const metrics = res.data;
+        if (metrics.status !== RunHistoryStatus.RUNNING) {
+          dispatch(
+            setRunningJobStatus({
+              scenarioId: metrics.scenarioId,
+              runHistoryId: metrics.runHistoryId,
+              status: metrics.status,
+            }),
+          );
+        }
+      },
     }),
   }),
 });
