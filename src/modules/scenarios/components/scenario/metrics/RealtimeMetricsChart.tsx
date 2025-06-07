@@ -10,7 +10,7 @@ import { RunHistoryStatus } from "@/scenarios/types/runHistory";
 import { getProgressStatus } from "@/scenarios/utils/metricsUtils";
 import { colors } from "@/shared/constants/colors";
 import { useAppDispatch, useAppSelector } from "@/shared/hooks";
-import { Card, Col, Progress, Row, Select, Spin, Tag } from "antd";
+import { Card, Col, Progress, Row, Select, Tag } from "antd";
 import Text from "antd/es/typography/Text";
 import AntTitle from "antd/es/typography/Title";
 import {
@@ -90,23 +90,6 @@ export function RealtimeMetricsChart({
     },
   );
 
-  if (isLoading) {
-    return (
-      <Card>
-        <div
-          style={{
-            height: "400px",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
-          <Spin size="large" />
-        </div>
-      </Card>
-    );
-  }
-
   return (
     <Card style={style}>
       <div className="flex flex-col gap-2">
@@ -125,7 +108,7 @@ export function RealtimeMetricsChart({
             )}
           </div>
           {showFilter && <RealtimeMetricsFilter />}
-          {showViewDetails && (
+          {showViewDetails && scenarioId && (
             <Link href={`/scenarios/${scenarioId}`}>View Details</Link>
           )}
         </div>
@@ -136,17 +119,17 @@ export function RealtimeMetricsChart({
                 <div className="flex items-center justify-between">
                   <Text type="secondary">
                     Last updated:{" "}
-                    {dayjs(metrics?.lastUpdated).format("YYYY-MM-DD HH:mm:ss")}
+                    {dayjs(metrics?.lastUpdated).format("HH:mm:ss DD/MM/YYYY")}
                   </Text>
                   <div className="flex gap-2">
                     <Text type="secondary">
                       Run at:{" "}
-                      {dayjs(metrics?.runAt).format("YYYY-MM-DD HH:mm:ss")} -
+                      {dayjs(metrics?.runAt).format("HH:mm:ss DD/MM/YYYY")} -
                     </Text>
                     <Text type="secondary">
                       End at:{" "}
                       {metrics?.endAt
-                        ? dayjs(metrics?.endAt).format("YYYY-MM-DD HH:mm:ss")
+                        ? dayjs(metrics?.endAt).format("HH:mm:ss DD/MM/YYYY")
                         : "N/A"}
                     </Text>
                   </div>
@@ -165,37 +148,49 @@ export function RealtimeMetricsChart({
             </Col>
           )}
           <Col xs={24} md={8}>
-            <LineMetricsCard
-              data={metrics?.metrics?.latency ?? []}
-              label="Latency (ms)"
-              color={colors.blue}
-              valueKey="avg"
-              unit="ms"
-              bottlenecks={bottlenecks}
-              metricType="latency"
-            />
+            {isLoading ? (
+              <Card loading={isLoading} style={{ height: "300px" }} />
+            ) : (
+              <LineMetricsCard
+                data={metrics?.metrics?.latency ?? []}
+                label="Latency (ms)"
+                color={colors.blue}
+                valueKey="avg"
+                unit="ms"
+                bottlenecks={bottlenecks}
+                metricType="latency"
+              />
+            )}
           </Col>
           <Col xs={24} md={8}>
-            <LineMetricsCard
-              data={metrics?.metrics?.throughput ?? []}
-              label="Throughput (req/s)"
-              color={colors.green}
-              valueKey="value"
-              unit="req/s"
-              bottlenecks={bottlenecks}
-              metricType="throughput"
-            />
+            {isLoading ? (
+              <Card loading={isLoading} style={{ height: "300px" }} />
+            ) : (
+              <LineMetricsCard
+                data={metrics?.metrics?.throughput ?? []}
+                label="Throughput (req/s)"
+                color={colors.green}
+                valueKey="value"
+                unit="req/s"
+                bottlenecks={bottlenecks}
+                metricType="throughput"
+              />
+            )}
           </Col>
           <Col xs={24} md={8}>
-            <LineMetricsCard
-              data={metrics?.metrics?.errorRate ?? []}
-              label="Error Rate (%)"
-              color={colors.error}
-              valueKey="value"
-              unit="%"
-              bottlenecks={bottlenecks}
-              metricType="errorRate"
-            />
+            {isLoading ? (
+              <Card loading={isLoading} style={{ height: "300px" }} />
+            ) : (
+              <LineMetricsCard
+                data={metrics?.metrics?.errorRate ?? []}
+                label="Error Rate (%)"
+                color={colors.error}
+                valueKey="value"
+                unit="%"
+                bottlenecks={bottlenecks}
+                metricType="errorRate"
+              />
+            )}
           </Col>
         </Row>
       </div>

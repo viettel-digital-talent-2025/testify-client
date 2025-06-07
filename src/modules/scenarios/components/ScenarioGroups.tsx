@@ -12,7 +12,6 @@ import {
 import { useAppDispatch, useAppSelector } from "@/shared/hooks/useStore";
 import {
   DownOutlined,
-  DropboxOutlined,
   GroupOutlined,
   MoreOutlined,
   PlusOutlined,
@@ -22,7 +21,6 @@ import {
   Card,
   Dropdown,
   MenuProps,
-  Tooltip,
   Tree,
   TreeDataNode,
   TreeProps,
@@ -35,7 +33,6 @@ import {
   useDeleteScenarioGroupMutation,
   useGetScenarioGroupsQuery,
 } from "../apis/scenarioGroupApi";
-import { setReverseIsDragging } from "../slices/scenarioGroupsSlice";
 import { ScenarioGroup } from "../types/scenarioGroup";
 import { getScenarioIconByType } from "../utils";
 import { GroupModal } from "./group";
@@ -53,14 +50,14 @@ const ScenarioGroupsHeader = memo(() => {
         </Title>
       </div>
       <div>
-        <Tooltip title="Drag and drop to reorder">
+        {/* <Tooltip title="Drag and drop to reorder">
           <Button
             size="small"
             type="text"
             icon={<DropboxOutlined />}
             onClick={() => dispatch(setReverseIsDragging())}
           />
-        </Tooltip>
+        </Tooltip> */}
         <Button
           size="small"
           type="text"
@@ -89,6 +86,15 @@ const ScenarioGroupsTree = memo(() => {
       setSelectedKeys([params.id as string]);
     }
   }, [params.id]);
+
+  useEffect(() => {
+    if (data?.scenarioGroups?.length) {
+      setExpandedKeys([
+        "null",
+        ...data.scenarioGroups.map((group) => group.id),
+      ]);
+    }
+  }, [data?.scenarioGroups]);
 
   const onExpand: TreeProps["onExpand"] = useCallback(
     (
@@ -225,6 +231,7 @@ const ScenarioGroupsTree = memo(() => {
         expandedKeys={expandedKeys}
         onExpand={onExpand}
         onSelect={onSelect}
+        defaultExpandAll
       />
     </div>
   );

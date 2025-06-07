@@ -12,7 +12,6 @@ import {
   CheckCircleOutlined,
   ClockCircleOutlined,
   CloseCircleOutlined,
-  ThunderboltOutlined,
   UserOutlined,
 } from "@ant-design/icons";
 import { Radio, RadioChangeEvent, Statistic, Tag } from "antd";
@@ -66,21 +65,21 @@ export default function RunHistorySummary({
 
       <div className="flex justify-between">
         <Statistic
-          title="VUs"
-          value={runHistory.vus}
+          title="Avg Latency"
+          value={runHistory.avgLatency.toFixed(2)}
           prefix={<UserOutlined />}
           valueStyle={{ fontSize: 16 }}
         />
         <Statistic
-          title="Duration"
-          value={runHistory.duration}
+          title="P95 Latency"
+          value={runHistory.p95Latency.toFixed(2)}
           suffix="s"
           prefix={<ClockCircleOutlined />}
           valueStyle={{ fontSize: 16 }}
         />
         <Statistic
-          title="Success Rate"
-          value={runHistory.successRate}
+          title="Throughput"
+          value={runHistory.throughput.toFixed(2)}
           precision={1}
           suffix="%"
           prefix={<CheckCircleOutlined />}
@@ -88,25 +87,10 @@ export default function RunHistorySummary({
         />
         <Statistic
           title="Error Rate"
-          value={runHistory.errorRate}
+          value={runHistory.errorRate.toFixed(3)}
           precision={3}
           suffix="%"
           prefix={<CloseCircleOutlined />}
-          valueStyle={{ fontSize: 16 }}
-        />
-        <Statistic
-          title="Avg Response Time"
-          value={runHistory.avgResponseTime}
-          precision={0}
-          suffix="ms"
-          prefix={<ClockCircleOutlined />}
-          valueStyle={{ fontSize: 16 }}
-        />
-        <Statistic
-          title="Requests/sec"
-          value={runHistory.requestsPerSecond}
-          precision={1}
-          prefix={<ThunderboltOutlined />}
           valueStyle={{ fontSize: 16 }}
         />
       </div>

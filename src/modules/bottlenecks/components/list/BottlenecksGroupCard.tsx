@@ -1,8 +1,5 @@
 "use client";
-import {
-  getRunHistoryStatusColor,
-  getScenarioStatsIcon,
-} from "@/scenarios/utils";
+import { getScenarioStatsIcon } from "@/scenarios/utils";
 import { colors } from "@/shared/constants/colors";
 import { Card, Tag, Tooltip } from "antd";
 import Text from "antd/es/typography/Text";
@@ -37,15 +34,21 @@ export default function BottlenecksGroupCard({
           <div className="flex items-center justify-between gap-2">
             <Text strong>{history.scenario.name}</Text>
             <div className="flex flex-wrap justify-end gap-2">
-              <Tag style={{ marginRight: 0 }}>
-                {history.countBottlenecks} bottlenecks
-              </Tag>
-              <Tag
-                color={getRunHistoryStatusColor(history.status)}
-                style={{ marginRight: 0 }}
-              >
-                {history.status}
-              </Tag>
+              {history.countHigh > 0 && (
+                <Tag style={{ marginRight: 0 }} color="red">
+                  {history.countHigh} High
+                </Tag>
+              )}
+              {history.countMedium > 0 && (
+                <Tag style={{ marginRight: 0 }} color="orange">
+                  {history.countMedium} Medium
+                </Tag>
+              )}
+              {history.countLow > 0 && (
+                <Tag style={{ marginRight: 0 }} color="blue">
+                  {history.countLow} Low
+                </Tag>
+              )}
             </div>
           </div>
           <div className="flex items-center justify-between gap-2">
@@ -61,22 +64,20 @@ export default function BottlenecksGroupCard({
 
         <div className="flex justify-between gap-2">
           <Text>
-            {getScenarioStatsIcon("vus")}{" "}
-            <Text type="secondary">{history.vus} VUs</Text>
+            {getScenarioStatsIcon("avgLatency")}{" "}
+            <Text type="secondary">{history.avgLatency.toFixed(1)}ms</Text>
           </Text>
           <Text>
-            {getScenarioStatsIcon("duration")}{" "}
-            <Text type="secondary">{history.duration}s</Text>
+            {getScenarioStatsIcon("p95Latency")}{" "}
+            <Text type="secondary">{history.p95Latency.toFixed(1)}ms</Text>
           </Text>
           <Text>
-            {getScenarioStatsIcon("errorRate")}{" "}
+            {getScenarioStatsIcon("throughput")}{" "}
+            <Text type="secondary">{history.throughput.toFixed(1)}req/s</Text>
+          </Text>
+          <Text>
+            {getScenarioStatsIcon("errorRate")}
             <Text type="secondary">{history.errorRate.toFixed(3)}%</Text>
-          </Text>
-          <Text>
-            {getScenarioStatsIcon("requestsPerSecond")}
-            <Text type="secondary">
-              {history.requestsPerSecond.toFixed(1)} req/s
-            </Text>
           </Text>
         </div>
       </div>

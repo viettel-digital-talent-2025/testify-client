@@ -37,7 +37,7 @@ export default function BottlenecksList() {
     [selectedRunHistoryId],
   );
 
-  const lastUpdated = useMemo(() => dayjs().format("YYYY-MM-DD HH:mm:ss"), []);
+  const lastUpdated = useMemo(() => dayjs().format("HH:mm:ss DD/MM/YYYY"), []);
 
   const cardStyles = useMemo<CardProps>(
     () => ({

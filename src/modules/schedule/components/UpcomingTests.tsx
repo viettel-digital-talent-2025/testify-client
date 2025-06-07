@@ -86,7 +86,7 @@ const ScheduleCard = memo(
     const formatDate = useCallback((date: string, timezone?: string) => {
       return dayjs(date)
         .tz(timezone || "UTC")
-        .format("MMM DD, YYYY HH:mm:ss");
+        .format("HH:mm:ss DD/MM/YYYY");
     }, []);
 
     const getNextScheduleTime = useCallback(() => {
@@ -194,11 +194,6 @@ const ScheduleCard = memo(
                 Timezone: {schedule.timezone}
               </Typography.Text>
             </Space>
-            {schedule.config && (
-              <Typography.Text type="secondary">
-                Schedule Type: {schedule.config.type}
-              </Typography.Text>
-            )}
           </Space>
         </Space>
       </Card>

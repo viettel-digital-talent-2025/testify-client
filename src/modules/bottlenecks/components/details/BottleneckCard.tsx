@@ -51,7 +51,7 @@ export default function BottleneckCard({
         </div>
 
         <Tooltip
-          title={dayjs(bottleneck.timestamp).format("YYYY-MM-DD HH:mm:ss")}
+          title={dayjs(bottleneck.timestamp).format("HH:mm:ss DD/MM/YYYY")}
         >
           <Text
             type="secondary"
@@ -65,7 +65,7 @@ export default function BottleneckCard({
       <div className="flex justify-between gap-2">
         <Statistic
           title="Latency"
-          value={bottleneck.latency.toFixed(2)}
+          value={bottleneck.avgLatency.toFixed(2)}
           suffix="ms"
           prefix={<ClockCircleOutlined />}
           valueStyle={{ fontSize: 14 }}

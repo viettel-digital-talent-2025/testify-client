@@ -54,7 +54,8 @@ export default function BottleneckDetails() {
         children: (
           <>
             <RealtimeMetricsChart
-              id={runHistory.scenario.id}
+              isRunning={false}
+              scenarioId={runHistory.scenario.id}
               runHistoryId={runHistory.id}
               bottlenecks={allBottlenecks}
               title="Performance Metrics with Bottlenecks"
@@ -70,7 +71,8 @@ export default function BottleneckDetails() {
               {selectedSteps.map((step) => (
                 <div key={`${step.flowId}-${step.stepId}`}>
                   <RealtimeMetricsChart
-                    id={runHistory.scenario.id}
+                    isRunning={false}
+                    scenarioId={runHistory.scenario.id}
                     runHistoryId={runHistory.id}
                     flowId={step.flowId}
                     stepId={step.stepId}
