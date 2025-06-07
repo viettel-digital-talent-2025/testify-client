@@ -59,6 +59,20 @@ export const scenarioApi = appApi.injectEndpoints({
       },
     }),
 
+    getScenarioCount: builder.query<
+      {
+        WEB: number;
+        API: number;
+      },
+      void
+    >({
+      query: () => ({
+        url: "api/v1/scenarios/count",
+        method: "GET",
+      }),
+      providesTags: () => [{ type: "Scenario", id: "COUNT" }],
+    }),
+
     createScenario: builder.mutation<Scenario, CreateScenarioRequest>({
       query: (data) => ({
         url: "api/v1/scenarios",
@@ -68,6 +82,7 @@ export const scenarioApi = appApi.injectEndpoints({
       invalidatesTags: () => [
         { type: "Scenario", id: "LIST" },
         { type: "ScenarioGroup", id: "LIST" },
+        { type: "Scenario", id: "COUNT" },
       ],
     }),
 
@@ -93,6 +108,7 @@ export const scenarioApi = appApi.injectEndpoints({
         { type: "Scenario", id },
         { type: "Scenario", id: "LIST" },
         { type: "ScenarioGroup", id: "LIST" },
+        { type: "Scenario", id: "COUNT" },
       ],
     }),
   }),
@@ -102,6 +118,7 @@ export const {
   useGetScenariosQuery,
   useGetScenariosByGroupQuery,
   useGetScenarioQuery,
+  useGetScenarioCountQuery,
   useCreateScenarioMutation,
   useUpdateScenarioMutation,
   useDeleteScenarioMutation,
