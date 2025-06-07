@@ -45,7 +45,7 @@ export interface RealtimeMetrics {
 
 export interface RealtimeMetricsResponse {
   scenarioId: string;
-  runHistoryId?: string;
+  runHistoryId: string;
   scenarioName?: string;
   duration: string;
   interval: string;
