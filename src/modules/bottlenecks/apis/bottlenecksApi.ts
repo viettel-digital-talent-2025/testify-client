@@ -1,9 +1,20 @@
 "use client";
 import { appApi } from "@/shared/store/api/appApi";
-import { BottleneckRunHistory, BottlenecksGroup } from "../types/bottleneck";
+import {
+  BottleneckRunHistory,
+  BottlenecksCount,
+  BottlenecksGroup,
+} from "../types/bottleneck";
 
 export const bottlenecksApi = appApi.injectEndpoints({
   endpoints: (builder) => ({
+    getBottlenecksCount: builder.query<BottlenecksCount, void>({
+      query: () => ({
+        url: "api/v1/bottlenecks/count",
+        method: "GET",
+      }),
+    }),
+
     getBottlenecksRunHistory: builder.query<BottlenecksGroup[], void>({
       query: () => ({
         url: "api/v1/bottlenecks/run-history",
@@ -26,6 +37,7 @@ export const bottlenecksApi = appApi.injectEndpoints({
 });
 
 export const {
+  useGetBottlenecksCountQuery,
   useGetBottlenecksRunHistoryQuery,
   useGetBottlenecksByRunHistoryIdQuery,
 } = bottlenecksApi;

@@ -16,7 +16,8 @@ export interface Bottleneck {
   stepId: string;
   severity: BottleneckSeverity;
   timestamp: Date;
-  latency: number;
+  avgLatency: number;
+  p95Latency: number;
   throughput: number;
   errorRate: number;
   alertAt: Date | null;
@@ -30,8 +31,17 @@ export interface Bottleneck {
 
 export interface BottlenecksGroup extends RunHistory {
   countBottlenecks: number;
+  countLow: number;
+  countMedium: number;
+  countHigh: number;
 }
 
 export interface BottleneckRunHistory extends RunHistory {
   scenario: Scenario;
+}
+
+export interface BottlenecksCount {
+  LOW: number;
+  MEDIUM: number;
+  HIGH: number;
 }
