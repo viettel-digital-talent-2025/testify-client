@@ -2,6 +2,7 @@
 import { useGetBottlenecksByRunHistoryIdQuery } from "@/bottlenecks/apis/bottlenecksApi";
 import { selectSelectedRunHistoryId } from "@/bottlenecks/slices/bottlenecksSlice";
 import { RealtimeMetricsChart } from "@/scenarios/components/scenario/metrics/RealtimeMetricsChart";
+import { selectIsRunningJobByRunHistoryId } from "@/scenarios/slices/metricsSlice";
 import {
   selectSelectedSteps,
   setSelectedScenario,
@@ -19,6 +20,10 @@ export default function BottleneckDetails() {
   const dispatch = useAppDispatch();
   const selectedRunHistoryId = useSelector(selectSelectedRunHistoryId);
   const selectedSteps = useAppSelector(selectSelectedSteps);
+  const isRunning = useAppSelector((state) =>
+    selectIsRunningJobByRunHistoryId(state, selectedRunHistoryId),
+  );
+
   const { data: runHistory, isLoading } = useGetBottlenecksByRunHistoryIdQuery(
     { runHistoryId: selectedRunHistoryId || "" },
     { skip: !selectedRunHistoryId },
@@ -54,7 +59,7 @@ export default function BottleneckDetails() {
         children: (
           <>
             <RealtimeMetricsChart
-              isRunning={false}
+              isRunning={isRunning}
               scenarioId={runHistory.scenario.id}
               runHistoryId={runHistory.id}
               showFilter={true}
@@ -72,7 +77,7 @@ export default function BottleneckDetails() {
               {selectedSteps.map((step) => (
                 <div key={`${step.flowId}-${step.stepId}`}>
                   <RealtimeMetricsChart
-                    isRunning={false}
+                    isRunning={isRunning}
                     scenarioId={runHistory.scenario.id}
                     runHistoryId={runHistory.id}
                     flowId={step.flowId}
@@ -91,7 +96,7 @@ export default function BottleneckDetails() {
         ),
       },
     ];
-  }, [runHistory, allBottlenecks, selectedSteps]);
+  }, [runHistory, allBottlenecks, selectedSteps, isRunning]);
 
   if (isLoading) {
     return <Card loading={isLoading} />;

@@ -427,7 +427,7 @@ function LineMetricsCard({
               const timestamp = formatTime(data[item.dataIndex].timestamp);
               const bottleneck = bottlenecksByTimestamp.get(timestamp);
 
-              const value = item.raw as number;
+              const value = (item.raw as number).toFixed(2);
               if (bottleneck) {
                 const lines = [
                   `${item.dataset.label}: ${value} ${unit}`,
