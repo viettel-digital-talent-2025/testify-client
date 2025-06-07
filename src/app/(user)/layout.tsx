@@ -1,3 +1,4 @@
+import { GlobalBottlenecksAlert } from "@/bottlenecks/components/sse";
 import { GlobalConnectionStatus } from "@/scenarios/components/common";
 import { Header } from "@/shared/components/layouts";
 import { colors } from "@/shared/constants/colors";
@@ -17,6 +18,7 @@ export default function UserLayout({
         </Layout>
       </Layout>
       <GlobalConnectionStatus />
+      <GlobalBottlenecksAlert />
     </Layout>
   );
 }

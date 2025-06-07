@@ -1,12 +1,12 @@
-import Link from "next/link";
-import { Button, Row, Col, Space } from "antd";
-import { ArrowLeftOutlined } from "@ant-design/icons";
-import { PageTitle, PageTitleLayout } from "@/shared/components/pages";
 import {
+  CreateScenarioButton,
   ScenarioConfigCard,
   ScenarioDetailsCard,
-  CreateScenarioButton,
 } from "@/scenarios/components/create";
+import { PageTitle, PageTitleLayout } from "@/shared/components/pages";
+import { ArrowLeftOutlined } from "@ant-design/icons";
+import { Button, Col, Row, Space } from "antd";
+import Link from "next/link";
 
 export default function CreateScenarioPage() {
   return (
