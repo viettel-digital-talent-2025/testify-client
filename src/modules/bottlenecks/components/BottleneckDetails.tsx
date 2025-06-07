@@ -57,9 +57,10 @@ export default function BottleneckDetails() {
               isRunning={false}
               scenarioId={runHistory.scenario.id}
               runHistoryId={runHistory.id}
+              showFilter={true}
+              showSeverity={true}
               bottlenecks={allBottlenecks}
               title="Performance Metrics with Bottlenecks"
-              showFilter={true}
               style={{
                 flex: 1,
                 height: "100%",

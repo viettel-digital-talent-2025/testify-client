@@ -1,5 +1,5 @@
 "use client";
-import { Bottleneck } from "@/bottlenecks/types/bottleneck";
+import { Bottleneck, BottleneckSource } from "@/bottlenecks/types/bottleneck";
 import { getScenarioStatsIcon } from "@/scenarios/utils";
 import {
   ClockCircleOutlined,
@@ -30,7 +30,7 @@ export default function BottleneckCard({
                 color: getSeverityColor(bottleneck.severity),
               }}
             />
-            <Text strong>{bottleneck.severity} Severity</Text>
+            <Text strong>{bottleneck.severity}</Text>
           </div>
           {showFlowStep && (
             <div className="flex items-center gap-2">
@@ -51,7 +51,7 @@ export default function BottleneckCard({
         </div>
 
         <Tooltip
-          title={dayjs(bottleneck.timestamp).format("HH:mm:ss DD/MM/YYYY")}
+          title={dayjs(bottleneck.timestamp).format("YYYY-MM-DD HH:mm:ss")}
         >
           <Text
             type="secondary"
@@ -68,21 +68,36 @@ export default function BottleneckCard({
           value={bottleneck.avgLatency.toFixed(2)}
           suffix="ms"
           prefix={<ClockCircleOutlined />}
-          valueStyle={{ fontSize: 14 }}
+          valueStyle={{
+            fontSize: 14,
+            color: bottleneck.source.includes(BottleneckSource.LATENCY)
+              ? getSeverityColor(bottleneck.severity)
+              : "",
+          }}
         />
         <Statistic
           title="Throughput"
           value={bottleneck.throughput.toFixed(2)}
-          suffix="/s"
+          suffix="req/s"
           prefix={<ThunderboltOutlined />}
-          valueStyle={{ fontSize: 14 }}
+          valueStyle={{
+            fontSize: 14,
+            color: bottleneck.source.includes(BottleneckSource.THROUGHPUT)
+              ? getSeverityColor(bottleneck.severity)
+              : "",
+          }}
         />
         <Statistic
           title="Error Rate"
           value={bottleneck.errorRate.toFixed(3)}
           suffix="%"
           prefix={getScenarioStatsIcon("errorRate")}
-          valueStyle={{ fontSize: 14 }}
+          valueStyle={{
+            fontSize: 14,
+            color: bottleneck.source.includes(BottleneckSource.ERROR_RATE)
+              ? getSeverityColor(bottleneck.severity)
+              : "",
+          }}
         />
       </div>
 

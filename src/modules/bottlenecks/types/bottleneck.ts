@@ -7,6 +7,12 @@ export enum BottleneckSeverity {
   HIGH = "HIGH",
 }
 
+export enum BottleneckSource {
+  LATENCY = "LATENCY",
+  THROUGHPUT = "THROUGHPUT",
+  ERROR_RATE = "ERROR_RATE",
+}
+
 export interface Bottleneck {
   id: string;
   userId: string;
@@ -15,6 +21,7 @@ export interface Bottleneck {
   flowId: string;
   stepId: string;
   severity: BottleneckSeverity;
+  source: BottleneckSource[];
   timestamp: Date;
   avgLatency: number;
   p95Latency: number;

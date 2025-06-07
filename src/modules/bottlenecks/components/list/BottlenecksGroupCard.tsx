@@ -45,7 +45,7 @@ export default function BottlenecksGroupCard({
                 </Tag>
               )}
               {history.countLow > 0 && (
-                <Tag style={{ marginRight: 0 }} color="blue">
+                <Tag style={{ marginRight: 0 }} color="green">
                   {history.countLow} Low
                 </Tag>
               )}

@@ -44,9 +44,14 @@ export default function RunHistorySummary({
     <div className="mb-2">
       <div className="mb-2 flex items-start justify-between">
         <div className="">
-          <Title level={4}>{runHistory.scenario.name}</Title>
-          <div>
-            <Tag color={getRunHistoryStatusColor(runHistory.status)}>
+          <div className="flex items-center gap-2">
+            <Title level={4} style={{ marginBottom: 0 }}>
+              {runHistory.scenario.name}
+            </Title>
+            <Tag
+              color={getRunHistoryStatusColor(runHistory.status)}
+              style={{ marginRight: 0 }}
+            >
               {runHistory.status}
             </Tag>
             <Text type="secondary">{formattedRunAt}</Text>
