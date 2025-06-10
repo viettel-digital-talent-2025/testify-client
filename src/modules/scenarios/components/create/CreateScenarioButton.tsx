@@ -2,6 +2,7 @@
 import { useCreateScenarioMutation } from "@/scenarios/apis/scenarioApi";
 import { useScenarioFormContext } from "@/scenarios/contexts/ScenarioFormContext";
 import { getScenarioStrategy } from "@/scenarios/strategies";
+import { ScenarioFlowType } from "@/scenarios/types/scenario";
 import { useNotification } from "@/shared/hooks";
 import { PlusOutlined } from "@ant-design/icons";
 import { Button } from "antd";
@@ -20,7 +21,7 @@ export default function CreateScenarioButton() {
       return;
     }
 
-    const { name, description, vus, duration, type, flowType, groupId, flows } =
+    const { name, description, vus, duration, type, groupId, flows } =
       form.getFieldsValue();
 
     const durationInSeconds =
@@ -34,7 +35,7 @@ export default function CreateScenarioButton() {
       name,
       description,
       type,
-      flowType,
+      flowType: ScenarioFlowType.MULTI,
       vus,
       groupId: groupId === "null" ? null : groupId,
       duration: durationInSeconds,

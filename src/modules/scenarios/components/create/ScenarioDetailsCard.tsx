@@ -7,7 +7,6 @@ import {
   DurationInput,
   GroupInput,
   NameInput,
-  ScenarioFlowInput,
   ScenarioTypeInput,
   VusInput,
 } from "./details";
@@ -48,7 +47,7 @@ export default function ScenarioDetailsCard() {
         {/* Scenario Type */}
         <ScenarioTypeInput />
         {/* Scenario Flow */}
-        <ScenarioFlowInput />
+        {/* <ScenarioFlowInput /> */}
       </Form>
     </Card>
   );

@@ -21,35 +21,21 @@ export default function UpdateScenarioButton({ id }: { id: string }) {
       return;
     }
 
-    const {
-      name,
-      description,
-      vus,
-      duration,
-      type,
-      flowType,
-      groupId,
-      config,
-      flows,
-    } = form.getFieldsValue();
+    const { name, description, vus, duration, type, groupId, flows } =
+      form.getFieldsValue();
 
     const durationInSeconds =
       duration.hour() * 3600 + duration.minute() * 60 + duration.second();
 
     const strategy = getScenarioStrategy(type);
-    let formattedFlows = [];
-    if (flowType === ScenarioFlowType.SIMPLE) {
-      formattedFlows = strategy.createSimpleFlow(config);
-    } else {
-      formattedFlows = strategy.createMultiFlow(flows);
-    }
+    const formattedFlows = strategy.createMultiFlow(flows);
 
     const scenario = {
       id,
       name,
       description,
       type,
-      flowType,
+      flowType: ScenarioFlowType.MULTI,
       vus,
       groupId: groupId === "null" ? null : groupId,
       duration: durationInSeconds,
