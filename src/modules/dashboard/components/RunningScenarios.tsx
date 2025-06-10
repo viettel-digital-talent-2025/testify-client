@@ -1,7 +1,10 @@
 "use client";
 import { setSelectedRunHistory } from "@/dashboard/slices/dashboardSlice";
 import { useGetRunHistoriesQuery } from "@/scenarios/apis/runHistoryApi";
-import { selectIsRunningJob } from "@/scenarios/slices/metricsSlice";
+import {
+  selectIsRunningJob,
+  setRunningJobStatus,
+} from "@/scenarios/slices/metricsSlice";
 import { RunHistoryStatus } from "@/scenarios/types/runHistory";
 import { useAppDispatch, useAppSelector } from "@/shared/hooks";
 import dayjs from "dayjs";
@@ -28,10 +31,25 @@ export default function RunningScenarios() {
   );
 
   const { data } = useGetRunHistoriesQuery(params, {
-    skip: !isRunning,
-    pollingInterval: 1000,
+    pollingInterval: isRunning ? 1000 : 0,
     refetchOnMountOrArgChange: true,
   });
+
+  useEffect(() => {
+    if (!data?.data && data?.data.length) {
+      data.data.map((item) => {
+        if (item.status) {
+          dispatch(
+            setRunningJobStatus({
+              scenarioId: item.scenario.id,
+              runHistoryId: item.id,
+              status: item.status,
+            }),
+          );
+        }
+      });
+    }
+  }, [dispatch, data]);
 
   useEffect(() => {
     if (data?.data && data.data.length > 0 && isRunning && !hasSelected) {
