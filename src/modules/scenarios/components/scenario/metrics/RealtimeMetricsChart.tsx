@@ -1,6 +1,6 @@
 "use client";
 import {
-  Bottleneck,
+  BottleneckPoint,
   BottleneckSeverity,
   BottleneckSource,
 } from "@/bottlenecks/types/bottleneck";
@@ -66,7 +66,6 @@ export function RealtimeMetricsChart({
   showLastUpdated = true,
   showProgress = true,
   showSeverity = false,
-  bottlenecks,
   style,
 }: {
   isRunning: boolean;
@@ -81,10 +80,11 @@ export function RealtimeMetricsChart({
   showLastUpdated?: boolean;
   showProgress?: boolean;
   showSeverity?: boolean;
-  bottlenecks?: Bottleneck[];
   style?: React.CSSProperties;
 }) {
-  const { data: metrics, isLoading } = useGetMetricsQuery(
+  const selectedSeverity = useAppSelector(selectSelectedSeverity);
+
+  const { data: metrics, isLoading: isLoading } = useGetMetricsQuery(
     {
       scenarioId: scenarioId ?? undefined,
       runHistoryId: runHistoryId ?? undefined,
@@ -94,17 +94,16 @@ export function RealtimeMetricsChart({
     },
     {
       skip: !scenarioId,
-      pollingInterval: isRunning ? 1000 : 0,
+      pollingInterval: isRunning ? 5000 : 0,
     },
   );
 
-  const selectedSeverity = useAppSelector(selectSelectedSeverity);
   const filteredBottlenecks = useMemo(() => {
-    if (!bottlenecks) return [];
-    return bottlenecks.filter((bottleneck) =>
+    if (!metrics?.bottlenecks) return [];
+    return metrics.bottlenecks.filter((bottleneck) =>
       selectedSeverity.includes(bottleneck.severity),
     );
-  }, [bottlenecks, selectedSeverity]);
+  }, [metrics?.bottlenecks, selectedSeverity]);
 
   const bottleneckLatency = useMemo(() => {
     return filteredBottlenecks.filter((bottleneck) =>
@@ -347,7 +346,7 @@ interface LineMetricsCardProps {
   unit: string;
   color: string;
   valueKey: "value" | "avg" | "p95";
-  bottlenecks?: Bottleneck[];
+  bottlenecks?: BottleneckPoint[];
   metricType: "latency" | "throughput" | "errorRate";
 }
 
@@ -378,7 +377,7 @@ function LineMetricsCard({
 }: LineMetricsCardProps) {
   // Create a map of bottlenecks by timestamp for exact matching
   const bottlenecksByTimestamp = useMemo(() => {
-    const map = new Map<string, Bottleneck>();
+    const map = new Map<string, BottleneckPoint>();
     bottlenecks?.forEach((bottleneck) => {
       // Convert Date to string timestamp for consistent formatting
       const timestamp = formatTime(bottleneck.timestamp.toString());
