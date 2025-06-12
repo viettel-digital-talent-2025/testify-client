@@ -29,13 +29,13 @@ export default function BottleneckDetails() {
     { skip: !selectedRunHistoryId },
   );
 
-  const allBottlenecks = useMemo(() => {
-    if (!runHistory?.scenario?.flows) return [];
+  // const allBottlenecks = useMemo(() => {
+  //   if (!runHistory?.scenario?.flows) return [];
 
-    return runHistory.scenario.flows.flatMap((flow) =>
-      flow.steps.flatMap((step) => step.bottlenecks),
-    );
-  }, [runHistory]);
+  //   return runHistory.scenario.flows.flatMap((flow) =>
+  //     flow.steps.flatMap((step) => step.bottlenecks),
+  //   );
+  // }, [runHistory]);
 
   useEffect(() => {
     if (!runHistory) return;
@@ -43,7 +43,7 @@ export default function BottleneckDetails() {
   }, [dispatch, runHistory]);
 
   const items = useMemo(() => {
-    if (!runHistory || !allBottlenecks) {
+    if (!runHistory) {
       return [];
     }
 
@@ -64,7 +64,7 @@ export default function BottleneckDetails() {
               runHistoryId={runHistory.id}
               showFilter={true}
               showSeverity={true}
-              bottlenecks={allBottlenecks}
+              // bottlenecks={allBottlenecks}
               title="Performance Metrics with Bottlenecks"
               style={{
                 flex: 1,
@@ -85,9 +85,9 @@ export default function BottleneckDetails() {
                     title={`${step.flowName} ${step.stepName ? `- ${step.stepName}` : ""}`}
                     showLastUpdated={false}
                     showProgress={false}
-                    bottlenecks={allBottlenecks.filter(
-                      (bottleneck) => bottleneck.stepId === step.stepId,
-                    )}
+                    // bottlenecks={allBottlenecks.filter(
+                    //   (bottleneck) => bottleneck.stepId === step.stepId,
+                    // )}
                   />
                 </div>
               ))}
@@ -96,7 +96,7 @@ export default function BottleneckDetails() {
         ),
       },
     ];
-  }, [runHistory, allBottlenecks, selectedSteps, isRunning]);
+  }, [runHistory, selectedSteps, isRunning]);
 
   if (isLoading) {
     return <Card loading={isLoading} />;
