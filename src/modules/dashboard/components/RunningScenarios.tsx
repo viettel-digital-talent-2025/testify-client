@@ -7,7 +7,6 @@ import {
 } from "@/scenarios/slices/metricsSlice";
 import { RunHistoryStatus } from "@/scenarios/types/runHistory";
 import { useAppDispatch, useAppSelector } from "@/shared/hooks";
-import dayjs from "dayjs";
 import { useEffect, useMemo, useState } from "react";
 import RunHistoryListCard from "./RunHistoryListCard";
 
@@ -15,16 +14,17 @@ export default function RunningScenarios() {
   const dispatch = useAppDispatch();
   const isRunning = useAppSelector(selectIsRunningJob);
   const [hasSelected, setHasSelected] = useState(false);
+
   const params = useMemo(
     () => ({
-      take: 3,
+      take: 10,
       skip: 0,
       status: [RunHistoryStatus.RUNNING],
       orderBy: "runAt" as const,
       order: "desc" as const,
       scenarioId: null,
       search: "",
-      startTime: dayjs().subtract(1, "day").format("YYYY-MM-DD HH:mm:ss"),
+      startTime: null,
       endTime: null,
     }),
     [],
@@ -72,8 +72,8 @@ export default function RunningScenarios() {
   return (
     <RunHistoryListCard
       title="Running Scenarios"
-      data={isRunning ? data?.data : undefined}
-      emptyText="No running scenarios"
+      data={data?.data}
+      emptyText="No running scenarios now"
     />
   );
 }

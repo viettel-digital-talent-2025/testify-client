@@ -31,7 +31,7 @@ export default function RecentRuns() {
     <RunHistoryListCard
       title="Latest Scenario Runs"
       data={data?.data}
-      emptyText="No recent scenario runs"
+      emptyText="No recent scenario runs last 24 hours"
     />
   );
 }
