@@ -2,7 +2,6 @@ import { BottleneckDetails, BottlenecksList } from "@/bottlenecks/components";
 import { Col, Row } from "antd";
 import { Content } from "antd/es/layout/layout";
 
-
 export default function BottlenecksPage() {
   return (
     <Content

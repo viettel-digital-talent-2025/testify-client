@@ -36,6 +36,18 @@ export interface Bottleneck {
   step: { id: string; name: string };
 }
 
+export interface BottleneckPoint {
+  id: string;
+  timestamp: number;
+  severity: BottleneckSeverity;
+  source: BottleneckSource[];
+  p95Latency: number;
+  avgLatency: number;
+  throughput: number;
+  errorRate: number;
+  analysis: string | null;
+}
+
 export interface BottlenecksGroup extends RunHistory {
   countBottlenecks: number;
   countLow: number;
