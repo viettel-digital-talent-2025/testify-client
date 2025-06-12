@@ -69,11 +69,9 @@ export default metricsSlice.reducer;
 export const { setRunningJob, setRunningJobStatus } = metricsSlice.actions;
 
 export const selectIsRunningJobByRunHistoryId = createSelector(
-  (state: RootState, runHistoryId?: string | null) => ({
-    runningJobs: state.metrics.runningJobs,
-    runHistoryId,
-  }),
-  ({ runningJobs, runHistoryId }) => {
+  (state: RootState) => state.metrics.runningJobs,
+  (_: RootState, runHistoryId?: string | null) => runHistoryId,
+  (runningJobs, runHistoryId) => {
     if (!runHistoryId) return false;
     return Object.entries(runningJobs).some(
       ([key, job]) => key === runHistoryId && job.isRunning,
@@ -82,11 +80,9 @@ export const selectIsRunningJobByRunHistoryId = createSelector(
 );
 
 export const selectIsRunningJobByScenarioId = createSelector(
-  (state: RootState, scenarioId?: string | null) => ({
-    runningJobs: state.metrics.runningJobs,
-    scenarioId,
-  }),
-  ({ runningJobs, scenarioId }) => {
+  (state: RootState) => state.metrics.runningJobs,
+  (_: RootState, scenarioId?: string | null) => scenarioId,
+  (runningJobs, scenarioId) => {
     if (!scenarioId) return false;
     return Object.values(runningJobs).some(
       (job) => job.scenarioId === scenarioId && job.isRunning,

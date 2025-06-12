@@ -333,6 +333,7 @@ export default function RunDetailModal() {
           runHistoryId={run.id}
           showProgress={false}
           showFilter={true}
+          showSeverity
         />
         <DetailedMetrics />
       </Space>

@@ -15,7 +15,8 @@ export default function OverallMetrics() {
       <RealtimeMetricsChart
         isRunning={isRunning}
         scenarioId={scenarioId}
-        showFilter={true}
+        showFilter
+        showSeverity
       />
     </div>
   );

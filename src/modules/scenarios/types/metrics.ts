@@ -1,3 +1,4 @@
+import { BottleneckPoint } from "@/bottlenecks/types/bottleneck";
 import { RunHistoryStatus } from "./runHistory";
 
 export interface Metrics {
@@ -50,6 +51,7 @@ export interface RealtimeMetricsResponse {
   duration: string;
   interval: string;
   metrics: RealtimeMetrics;
+  bottlenecks: BottleneckPoint[];
   runAt: string;
   endAt: string | null;
   lastUpdated: string;
